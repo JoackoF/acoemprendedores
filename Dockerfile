@@ -1,31 +1,24 @@
-FROM php:8.2-fpm
+# Usa una imagen de PHP con Apache
+FROM php:8.2-apache
 
-# Instalar dependencias esenciales del sistema
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    unzip \
-    libzip-dev \
-    libonig-dev \
-    libxml2-dev
+# Instala las extensiones necesarias para MySQL
+RUN docker-php-ext-install pdo pdo_mysql
 
-# Limpiar caché
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# Habilita los logs de errores en pantalla
+RUN echo 'error_reporting = E_ALL' >> /usr/local/etc/php/conf.d/error-logging.ini \
+    && echo 'display_errors = On' >> /usr/local/etc/php/conf.d/error-logging.ini
 
-# Instalar extensiones esenciales de PHP
-RUN docker-php-ext-install pdo_mysql mbstring zip xml
-
-# Instalar Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Establecer el directorio de trabajo
+# Establece el directorio de trabajo
 WORKDIR /var/www/html
 
-# Copiar el código de la aplicación
-COPY . .
+# Copia el código fuente a la imagen
+COPY ./src /var/www/html
 
-# Instalar dependencias de Composer (sin dependencias de desarrollo)
-#RUN composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist
+# Da permisos al directorio (para logs, caché, etc.)
+RUN chown -R www-data:www-data /var/www/html
 
-# Permisos
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Expone el puerto 80 para acceder a la aplicación
+EXPOSE 80
+
+# Inicia Apache
+CMD ["apache2-foreground"]
