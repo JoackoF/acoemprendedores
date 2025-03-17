@@ -10,7 +10,7 @@ class EmpleadoController extends Controller
     // Mostrar lista de empleados
     public function index()
     {
-        $empleados = Empleado::all();
+        $empleados = Empleado::all(); // Recupera todos los empleados
         return view('empleados.index', compact('empleados'));
     }
 
@@ -38,7 +38,7 @@ class EmpleadoController extends Controller
             'telefono' => 'required',
         ]);
 
-        Empleado::create($request->all());
+        Empleado::create($request->all()); // Guarda el empleado en la base de datos
 
         return redirect()->route('empleados.index')
                          ->with('success', 'Empleado creado exitosamente.');
@@ -74,7 +74,7 @@ class EmpleadoController extends Controller
             'telefono' => 'required',
         ]);
 
-        $empleado->update($request->all());
+        $empleado->update($request->all()); // Actualiza el empleado en la base de datos
 
         return redirect()->route('empleados.index')
                          ->with('success', 'Empleado actualizado exitosamente.');
@@ -83,7 +83,7 @@ class EmpleadoController extends Controller
     // Eliminar un empleado de la base de datos
     public function destroy(Empleado $empleado)
     {
-        $empleado->delete();
+        $empleado->delete(); // Elimina el empleado de la base de datos
 
         return redirect()->route('empleados.index')
                          ->with('success', 'Empleado eliminado exitosamente.');

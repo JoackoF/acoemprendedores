@@ -8,6 +8,8 @@ class ProductoFinanciero extends Model
 {
     use HasFactory;
 
+    protected $table = 'productos_financieros'; // Especifica el nombre de la tabla
+
     protected $fillable = [
         'cliente_id',
         'tipo',
@@ -33,13 +35,11 @@ class ProductoFinanciero extends Model
         'causas_aplicables',
     ];
 
-    // Relación con Cliente (un Producto Financiero pertenece a un Cliente)
     public function cliente()
     {
         return $this->belongsTo(Cliente::class);
     }
 
-    // Relación con Transacciones (un Producto Financiero puede tener muchas Transacciones)
     public function transacciones()
     {
         return $this->hasMany(Transaccion::class);
