@@ -2,132 +2,118 @@
 CREATE DATABASE IF NOT EXISTS acoeemprendedores;
 USE acoeemprendedores;
 
--- Tabla: empleados
+-- Tabla de empleados
 CREATE TABLE empleados (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_empleado INT AUTO_INCREMENT PRIMARY KEY,
     codigo_empleado VARCHAR(20) UNIQUE NOT NULL,
-    nombre_completo VARCHAR(255) NOT NULL,
+    nombre_completo VARCHAR(100) NOT NULL,
     estado_familiar ENUM('Soltero', 'Casado', 'Divorciado', 'Viudo') NOT NULL,
     documento_identidad VARCHAR(20) UNIQUE NOT NULL,
     fecha_nacimiento DATE NOT NULL,
-    edad INT GENERATED ALWAYS AS (YEAR(CURDATE()) - YEAR(fecha_nacimiento)) VIRTUAL,
+    edad INT NOT NULL,
     direccion TEXT NOT NULL,
-    puesto VARCHAR(100) NOT NULL,
-    departamento ENUM('Finanzas', 'Atención al Cliente', 'Gerencia', 'Servicios Varios', 'Seguridad') NOT NULL,
-    sueldo DECIMAL(10,2) NOT NULL,
-    profesion VARCHAR(100) NOT NULL,
-    correo VARCHAR(100),
-    telefono VARCHAR(15)
+    puesto VARCHAR(50) NOT NULL,
+    departamento ENUM('Finanzas', 'Atención al cliente', 'Gerencia', 'Servicios varios', 'Seguridad') NOT NULL,
+    sueldo DECIMAL(10, 2) NOT NULL,
+    profesion VARCHAR(50),
+    correo VARCHAR(100) NOT NULL,
+    telefono VARCHAR(15) NOT NULL
 );
 
--- Tabla: clientes
+-- Tabla de clientes
 CREATE TABLE clientes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_completo VARCHAR(255) NOT NULL,
+    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo VARCHAR(100) NOT NULL,
     documento_identidad VARCHAR(20) UNIQUE NOT NULL,
     fecha_nacimiento DATE NOT NULL,
-    edad INT GENERATED ALWAYS AS (YEAR(CURDATE()) - YEAR(fecha_nacimiento)) VIRTUAL,
+    edad INT NOT NULL,
     direccion TEXT NOT NULL,
     estado_familiar ENUM('Soltero', 'Casado', 'Divorciado', 'Viudo') NOT NULL,
-    profesion VARCHAR(100),
-    correo VARCHAR(100),
-    telefono VARCHAR(15),
-    lugar_trabajo VARCHAR(255),
+    profesion VARCHAR(50),
+    correo VARCHAR(100) NOT NULL,
+    telefono VARCHAR(15) NOT NULL,
+    lugar_trabajo VARCHAR(100),
     direccion_trabajo TEXT,
-    salario_mensual DECIMAL(10,2),
-    otros_ingresos DECIMAL(10,2)
+    salario_mensual DECIMAL(10, 2),
+    otros_ingresos DECIMAL(10, 2)
 );
 
--- Tabla: cuentas
+-- Tabla de productos financieros
+CREATE TABLE productos_financieros (
+    id_producto INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    tipo_producto ENUM('Cuenta', 'Tarjeta', 'Prestamo', 'Seguro') NOT NULL,
+    detalle_producto TEXT NOT NULL,
+    fecha_adquisicion DATE NOT NULL,
+    fecha_cierre DATE,
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente)
+);
+
+-- Tabla de cuentas (Ahorro o Corriente)
 CREATE TABLE cuentas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    cliente_id INT NOT NULL,
+    id_cuenta INT AUTO_INCREMENT PRIMARY KEY,
+    id_producto INT UNIQUE NOT NULL,
     numero_cuenta VARCHAR(20) UNIQUE NOT NULL,
-    fecha_apertura DATE NOT NULL,
-    monto_apertura DECIMAL(10,2) NOT NULL,
-    fecha_cierre DATE,
-    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
+    monto_apertura DECIMAL(12, 2) NOT NULL,
+    FOREIGN KEY (id_producto) REFERENCES productos_financieros(id_producto)
 );
 
--- Tabla: tarjetas
+-- Tabla de tarjetas (Débito o Crédito)
 CREATE TABLE tarjetas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    cliente_id INT NOT NULL,
-    numero_tarjeta VARCHAR(16) UNIQUE NOT NULL,
-    fecha_adquisicion DATE NOT NULL,
-    limite_monto DECIMAL(10,2) NOT NULL,
-    fecha_cierre DATE,
+    id_tarjeta INT AUTO_INCREMENT PRIMARY KEY,
+    id_producto INT UNIQUE NOT NULL,
+    numero_tarjeta VARCHAR(20) UNIQUE NOT NULL,
+    limite_monto DECIMAL(12, 2) NOT NULL,
     tipo_red ENUM('Visa', 'MasterCard') NOT NULL,
-    categoria ENUM('Clásica', 'Oro', 'Platinum', 'Infinite', 'Empresarial') NOT NULL,
-    tasa_interes DECIMAL(5,2) NOT NULL,
-    costo_membresia DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
+    categoria ENUM('Clasica', 'Infinite', 'Oro', 'Platinum', 'Empresarial') NOT NULL,
+    tasa_interes DECIMAL(5, 2) NOT NULL,
+    costo_membresia DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (id_producto) REFERENCES productos_financieros(id_producto)
 );
 
--- Tabla: prestamos
+-- Tabla de préstamos (Personal, Agropecuario o Hipotecario)
 CREATE TABLE prestamos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    cliente_id INT NOT NULL,
+    id_prestamo INT AUTO_INCREMENT PRIMARY KEY,
+    id_producto INT UNIQUE NOT NULL,
     numero_referencia VARCHAR(20) UNIQUE NOT NULL,
-    fecha_adquisicion DATE NOT NULL,
-    monto_otorgado DECIMAL(10,2) NOT NULL,
-    plazos_pago INT NOT NULL,
-    cuota DECIMAL(10,2) NOT NULL,
-    fecha_limite_pago DATE NOT NULL,
-    tasa_interes DECIMAL(5,2) NOT NULL,
-    cuota_seguro DECIMAL(10,2),
-    categoria ENUM('Personal', 'Agropecuario', 'Hipotecario') NOT NULL,
-    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
+    monto_otorgado DECIMAL(12, 2) NOT NULL,
+    plazo_pago INT NOT NULL,
+    cuota DECIMAL(12, 2) NOT NULL,
+    tasa_interes DECIMAL(5, 2) NOT NULL,
+    cuota_seguro DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (id_producto) REFERENCES productos_financieros(id_producto)
 );
 
--- Tabla: seguros
+-- Tabla de seguros (Vida, Salud o Asistencia)
 CREATE TABLE seguros (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    cliente_id INT NOT NULL,
-    numero_referencia VARCHAR(20) UNIQUE NOT NULL,
+    id_seguro INT AUTO_INCREMENT PRIMARY KEY,
+    id_producto INT UNIQUE NOT NULL,
     categoria ENUM('Vida', 'Salud', 'Asistencia') NOT NULL,
-    monto_asegurado DECIMAL(10,2) NOT NULL,
-    fecha_contratacion DATE NOT NULL,
-    fecha_finalizacion DATE,
+    monto_asegurado DECIMAL(12, 2) NOT NULL,
     plazo_pago ENUM('Mensual', 'Trimestral', 'Semestral', 'Anual') NOT NULL,
-    monto_cuota DECIMAL(10,2) NOT NULL,
-    renta_diaria DECIMAL(10,2),
-    causa_aplicable TEXT,
-    tipo_asistencia ENUM('Vial', 'Hogar'),
-    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
+    cuota DECIMAL(10, 2) NOT NULL,
+    renta_hospitalizacion DECIMAL(10, 2),
+    causas TEXT,
+    FOREIGN KEY (id_producto) REFERENCES productos_financieros(id_producto)
 );
 
--- Tabla: beneficiarios
-CREATE TABLE beneficiarios (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    seguro_id INT NOT NULL,
-    nombre VARCHAR(255) NOT NULL,
-    parentesco VARCHAR(50) NOT NULL,
-    porcentaje DECIMAL(5,2) NOT NULL,
-    FOREIGN KEY (seguro_id) REFERENCES seguros(id) ON DELETE CASCADE
-);
-
--- Tabla: transacciones
+-- Tabla de transacciones
 CREATE TABLE transacciones (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    referencia_id INT NOT NULL,
-    tipo_producto ENUM('Cuenta', 'Tarjeta', 'Prestamo') NOT NULL,
-    empleado_id INT NOT NULL,
-    monto DECIMAL(10,2) NOT NULL,
+    id_transaccion INT AUTO_INCREMENT PRIMARY KEY,
+    id_producto INT NOT NULL,
+    id_empleado INT NOT NULL,
+    monto DECIMAL(12, 2) NOT NULL,
     fecha_transaccion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (empleado_id) REFERENCES empleados(id) ON DELETE SET NULL
+    FOREIGN KEY (id_producto) REFERENCES productos_financieros(id_producto),
+    FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado)
 );
 
--- Tabla: usuarios
+-- Tabla de usuarios (ligados a empleados)
 CREATE TABLE usuarios (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    empleado_id INT NOT NULL,
-    nombre_usuario VARCHAR(50) UNIQUE NOT NULL,
-    contraseña VARCHAR(255) NOT NULL,
-    rol ENUM('Admin', 'Cajero', 'Analista') NOT NULL,
-    FOREIGN KEY (empleado_id) REFERENCES empleados(id) ON DELETE CASCADE
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    id_empleado INT UNIQUE NOT NULL,
+    usuario VARCHAR(50) UNIQUE NOT NULL,
+    clave VARCHAR(255) NOT NULL,
+    rol ENUM('admin', 'cajero', 'gerente') NOT NULL,
+    FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado)
 );
-
--- Usuario admin predefinido (contraseña: admin123)
-INSERT INTO usuarios (empleado_id, nombre_usuario, contraseña, rol)
-VALUES (1, 'admin', '$2y$10$XGd4MO1C9HzJkE9prp7bzeKof3FqPg8l.DW5d/cD1BZXXQ6uKiTKm', 'Admin');
