@@ -2,19 +2,36 @@
 session_start();
 
 // Datos quemados para pruebas
-$usuarioFijo = 'admin';
-$claveFija = 'admin123';
+$usuarios = [
+    'admin' => [
+        'clave' => 'admin123',
+        'nombre' => 'Administrador',
+        'rol' => 'admin',
+    ],
+    'empleado' => [
+        'clave' => 'empleado123',
+        'nombre' => 'Ana Martínez',
+        'rol' => 'empleado',
+    ],
+];
 
 // Procesar el formulario de login
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $usuario = $_POST['usuario'] ?? '';
     $clave = $_POST['clave'] ?? '';
 
-    if ($usuario === $usuarioFijo && $clave === $claveFija) {
+    // Verificar si el usuario existe y la clave es correcta
+    if (isset($usuarios[$usuario]) && $usuarios[$usuario]['clave'] === $clave) {
         $_SESSION['usuario_id'] = 1; // ID de ejemplo
-        $_SESSION['nombre'] = 'Administrador';
-        $_SESSION['rol'] = 'admin';
-        header('Location: dashboard.php');
+        $_SESSION['nombre'] = $usuarios[$usuario]['nombre'];
+        $_SESSION['rol'] = $usuarios[$usuario]['rol'];
+
+        // Redirigir según el rol
+        if ($_SESSION['rol'] === 'admin') {
+            header('Location: dashboard.php');
+        } elseif ($_SESSION['rol'] === 'empleado') {
+            header('Location: vista-empleado.php');
+        }
         exit();
     } else {
         $error = 'Usuario o contraseña incorrectos';
@@ -46,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="password" name="clave" class="w-full p-2 border rounded" required>
         </label>
 
-        <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Acceder</button>
+        <button type="submit" class="w-full bg-gray-700 text-white p-2 rounded hover:bg-gray-600">Acceder</button>
     </form>
 </body>
 </html>
