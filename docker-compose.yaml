@@ -11,8 +11,8 @@ services:
     networks:
       - app-network
     volumes:
-      - ./src:/var/www/html  # Monta el directorio actual en el directorio del servidor Apache
-    restart: unless-stopped  # Reinicia automáticamente el contenedor a menos que se detenga manualmente
+      - ./src:/var/www/html
+    restart: unless-stopped
 
   mysql:
     image: mysql:8.0
@@ -29,7 +29,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    restart: unless-stopped  # Reinicia automáticamente el contenedor a menos que se detenga manualmente
+    restart: unless-stopped
 
 networks:
   app-network:

@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Verificar que el usuario es un empleado
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'empleado') {
     header('Location: login.php');
     exit();
@@ -9,7 +8,6 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'empleado') {
 
 require 'conexion.php';
 
-// Procesar formulario para registrar un cliente
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_cliente'])) {
     $nombre_completo = $_POST['nombre_completo'];
     $documento_identidad = $_POST['documento_identidad'];
@@ -23,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_cliente']))
     exit();
 }
 
-// Procesar formulario para asignar un producto financiero
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['asignar_producto'])) {
     $id_cliente = $_POST['id_cliente'];
     $tipo_producto = $_POST['tipo_producto'];
@@ -36,7 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['asignar_producto'])) 
     exit();
 }
 
-// Procesar formulario para registrar una transacción
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_transaccion'])) {
     $id_producto = $_POST['id_producto'];
     $monto = $_POST['monto'];
@@ -48,20 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_transaccion
     exit();
 }
 
-// Obtener estadísticas básicas
 $totalClientes = $pdo->query("SELECT COUNT(*) as total FROM clientes")->fetch(PDO::FETCH_ASSOC)['total'];
 $totalProductos = $pdo->query("SELECT COUNT(*) as total FROM productos_financieros")->fetch(PDO::FETCH_ASSOC)['total'];
 $totalTransacciones = $pdo->query("SELECT COUNT(*) as total FROM transacciones")->fetch(PDO::FETCH_ASSOC)['total'];
 
-// Obtener lista de clientes
 $clientes = $pdo->query("SELECT id_cliente, nombre_completo FROM clientes")->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener lista de productos financieros
 $productos = $pdo->query("SELECT pf.id_producto, pf.tipo_producto, c.nombre_completo 
                           FROM productos_financieros pf
                           JOIN clientes c ON pf.id_cliente = c.id_cliente")->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener últimas transacciones
 $ultimasTransacciones = $pdo->query("SELECT t.id_transaccion, t.monto, t.fecha_transaccion, c.nombre_completo 
                                      FROM transacciones t
                                      JOIN productos_financieros pf ON t.id_producto = pf.id_producto
@@ -80,10 +72,8 @@ $ultimasTransacciones = $pdo->query("SELECT t.id_transaccion, t.monto, t.fecha_t
 </head>
 <body class="bg-gray-100">
     <div class="flex">
-        <!-- Sidebar -->
         <?php include 'sidebar.php'; ?>
 
-        <!-- Main content -->
         <div class="flex-1 p-6">
             <h1 class="text-3xl font-semibold mb-6">Bienvenido, <?php echo htmlspecialchars($_SESSION['nombre']); ?></h1>
 
@@ -91,7 +81,6 @@ $ultimasTransacciones = $pdo->query("SELECT t.id_transaccion, t.monto, t.fecha_t
                 <a href="logout.php" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Cerrar Sesión</a>
             </div>
 
-            <!-- Estadísticas básicas -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-white p-6 rounded-lg shadow-lg">
                     <h2 class="text-xl font-semibold mb-2">Clientes</h2>
@@ -107,7 +96,6 @@ $ultimasTransacciones = $pdo->query("SELECT t.id_transaccion, t.monto, t.fecha_t
                 </div>
             </div>
 
-            <!-- Últimas transacciones -->
             <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
                 <h2 class="text-xl font-semibold mb-4">Últimas Transacciones</h2>
                 <table class="min-w-full">
@@ -132,7 +120,6 @@ $ultimasTransacciones = $pdo->query("SELECT t.id_transaccion, t.monto, t.fecha_t
                 </table>
             </div>
 
-            <!-- Botones para mostrar formularios -->
             <div class="mb-6 space-x-4">
                 <button onclick="mostrarFormulario('formularioCliente')" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
                     Registrar Cliente
@@ -145,7 +132,6 @@ $ultimasTransacciones = $pdo->query("SELECT t.id_transaccion, t.monto, t.fecha_t
                 </button>
             </div>
 
-            <!-- Formulario para registrar un cliente (oculto por defecto) -->
             <div id="formularioCliente" class="hidden bg-white p-6 rounded-lg shadow-lg mb-8">
                 <h2 class="text-xl font-semibold mb-4">Registrar Cliente</h2>
                 <form method="POST">
@@ -174,7 +160,6 @@ $ultimasTransacciones = $pdo->query("SELECT t.id_transaccion, t.monto, t.fecha_t
                 </form>
             </div>
 
-            <!-- Formulario para asignar un producto financiero (oculto por defecto) -->
             <div id="formularioProducto" class="hidden bg-white p-6 rounded-lg shadow-lg mb-8">
                 <h2 class="text-xl font-semibold mb-4">Asignar Producto Financiero</h2>
                 <form method="POST">
@@ -208,7 +193,6 @@ $ultimasTransacciones = $pdo->query("SELECT t.id_transaccion, t.monto, t.fecha_t
                 </form>
             </div>
 
-            <!-- Formulario para registrar una transacción (oculto por defecto) -->
             <div id="formularioTransaccion" class="hidden bg-white p-6 rounded-lg shadow-lg mb-8">
                 <h2 class="text-xl font-semibold mb-4">Registrar Transacción</h2>
                 <form method="POST">
@@ -238,18 +222,14 @@ $ultimasTransacciones = $pdo->query("SELECT t.id_transaccion, t.monto, t.fecha_t
     </div>
 
     <script>
-        // Función para mostrar un formulario
         function mostrarFormulario(idFormulario) {
-            // Ocultar todos los formularios
             document.getElementById('formularioCliente').style.display = 'none';
             document.getElementById('formularioProducto').style.display = 'none';
             document.getElementById('formularioTransaccion').style.display = 'none';
 
-            // Mostrar el formulario solicitado
             document.getElementById(idFormulario).style.display = 'block';
         }
 
-        // Función para ocultar un formulario
         function ocultarFormulario(idFormulario) {
             document.getElementById(idFormulario).style.display = 'none';
         }

@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// Verificar que el usuario es un empleado
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'empleado') {
     header('Location: login.php');
     exit();
 }
 
-// Datos quemados para pruebas (simulando datos de la base de datos)
 $transacciones = [
     ['id_transaccion' => 1, 'monto' => 150.75, 'fecha_transaccion' => '2023-10-01', 'cliente' => 'Juan Pérez'],
     ['id_transaccion' => 2, 'monto' => 200.50, 'fecha_transaccion' => '2023-10-02', 'cliente' => 'María López'],
@@ -25,10 +23,8 @@ $transacciones = [
 </head>
 <body class="bg-gray-100">
     <div class="flex">
-        <!-- Sidebar -->
         <?php include 'sidebar-empleado.php'; ?>
 
-        <!-- Main content -->
         <div class="flex-1 p-6">
             <h1 class="text-3xl font-semibold mb-6">Transacciones</h1>
 
@@ -36,7 +32,6 @@ $transacciones = [
                 <a href="vista-empleado.php" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700">Regresar</a>
             </div>
 
-            <!-- Tabla de transacciones -->
             <div class="bg-white p-6 rounded-lg shadow-lg">
                 <h2 class="text-xl font-semibold mb-4">Lista de Transacciones</h2>
                 <table class="min-w-full">

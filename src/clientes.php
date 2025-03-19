@@ -2,13 +2,11 @@
 session_start();
 require 'conexion.php';
 
-// Verificar que el usuario es un administrador
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     header('Location: login.php');
     exit();
 }
 
-// Obtener lista de clientes
 $clientes = $pdo->query("SELECT * FROM clientes")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -22,10 +20,8 @@ $clientes = $pdo->query("SELECT * FROM clientes")->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body class="bg-gray-100">
     <div class="flex">
-        <!-- Sidebar -->
         <?php include 'sidebar.php'; ?>
 
-        <!-- Main content -->
         <div class="flex-1 p-6">
             <h1 class="text-3xl font-semibold mb-6">Clientes</h1>
 

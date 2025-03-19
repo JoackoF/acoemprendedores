@@ -1,8 +1,6 @@
--- Crear la base de datos
 CREATE DATABASE IF NOT EXISTS acoeemprendedores;
 USE acoeemprendedores;
 
--- Tabla de empleados
 CREATE TABLE empleados (
     id_empleado INT AUTO_INCREMENT PRIMARY KEY,
     codigo_empleado VARCHAR(20) UNIQUE NOT NULL,
@@ -20,7 +18,6 @@ CREATE TABLE empleados (
     telefono VARCHAR(15) NOT NULL
 );
 
--- Tabla de clientes
 CREATE TABLE clientes (
     id_cliente INT AUTO_INCREMENT PRIMARY KEY,
     nombre_completo VARCHAR(100) NOT NULL,
@@ -38,7 +35,6 @@ CREATE TABLE clientes (
     otros_ingresos DECIMAL(10, 2)
 );
 
--- Tabla de productos financieros
 CREATE TABLE productos_financieros (
     id_producto INT AUTO_INCREMENT PRIMARY KEY,
     id_cliente INT NOT NULL,
@@ -49,7 +45,6 @@ CREATE TABLE productos_financieros (
     FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente)
 );
 
--- Tabla de cuentas (Ahorro o Corriente)
 CREATE TABLE cuentas (
     id_cuenta INT AUTO_INCREMENT PRIMARY KEY,
     id_producto INT UNIQUE NOT NULL,
@@ -58,7 +53,6 @@ CREATE TABLE cuentas (
     FOREIGN KEY (id_producto) REFERENCES productos_financieros(id_producto)
 );
 
--- Tabla de tarjetas (Débito o Crédito)
 CREATE TABLE tarjetas (
     id_tarjeta INT AUTO_INCREMENT PRIMARY KEY,
     id_producto INT UNIQUE NOT NULL,
@@ -71,7 +65,6 @@ CREATE TABLE tarjetas (
     FOREIGN KEY (id_producto) REFERENCES productos_financieros(id_producto)
 );
 
--- Tabla de préstamos (Personal, Agropecuario o Hipotecario)
 CREATE TABLE prestamos (
     id_prestamo INT AUTO_INCREMENT PRIMARY KEY,
     id_producto INT UNIQUE NOT NULL,
@@ -84,7 +77,6 @@ CREATE TABLE prestamos (
     FOREIGN KEY (id_producto) REFERENCES productos_financieros(id_producto)
 );
 
--- Tabla de seguros (Vida, Salud o Asistencia)
 CREATE TABLE seguros (
     id_seguro INT AUTO_INCREMENT PRIMARY KEY,
     id_producto INT UNIQUE NOT NULL,
@@ -97,7 +89,6 @@ CREATE TABLE seguros (
     FOREIGN KEY (id_producto) REFERENCES productos_financieros(id_producto)
 );
 
--- Tabla de transacciones
 CREATE TABLE transacciones (
     id_transaccion INT AUTO_INCREMENT PRIMARY KEY,
     id_producto INT NOT NULL,
@@ -108,7 +99,6 @@ CREATE TABLE transacciones (
     FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado)
 );
 
--- Tabla de usuarios (ligados a empleados)
 CREATE TABLE usuarios (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     id_empleado INT UNIQUE NOT NULL,

@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Datos quemados para pruebas
 $usuarios = [
     'admin' => [
         'clave' => 'admin123',
@@ -15,12 +14,10 @@ $usuarios = [
     ],
 ];
 
-// Procesar el formulario de login
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $usuario = $_POST['usuario'] ?? '';
     $clave = $_POST['clave'] ?? '';
 
-    // Verificar si el usuario existe y la clave es correcta
     if (isset($usuarios[$usuario]) && $usuarios[$usuario]['clave'] === $clave) {
         $_SESSION['usuario_id'] = 1; // ID de ejemplo
         $_SESSION['nombre'] = $usuarios[$usuario]['nombre'];

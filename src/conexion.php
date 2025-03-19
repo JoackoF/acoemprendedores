@@ -1,6 +1,5 @@
 <?php
-// conexion.php - Maneja la conexión a la base de datos
-$host = 'mysql'; // Nombre del servicio en docker-compose
+$host = 'mysql';
 $dbname = 'acoeemprendedores';
 $username = 'admin';
 $password = 'adminpassword';
