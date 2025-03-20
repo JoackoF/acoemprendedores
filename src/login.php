@@ -1,27 +1,20 @@
 <?php
 session_start();
 
-$usuarios = [
-    'admin' => [
-        'clave' => 'admin123',
-        'nombre' => 'Administrador',
-        'rol' => 'admin',
-    ],
-    'empleado' => [
-        'clave' => 'empleado123',
-        'nombre' => 'Ana Martínez',
-        'rol' => 'empleado',
-    ],
-];
+require 'conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $usuario = $_POST['usuario'] ?? '';
     $clave = $_POST['clave'] ?? '';
 
-    if (isset($usuarios[$usuario]) && $usuarios[$usuario]['clave'] === $clave) {
-        $_SESSION['usuario_id'] = 1; // ID de ejemplo
-        $_SESSION['nombre'] = $usuarios[$usuario]['nombre'];
-        $_SESSION['rol'] = $usuarios[$usuario]['rol'];
+    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE usuario = ?");
+    $stmt->execute([$usuario]);
+    $usuario_db = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($usuario_db && password_verify($clave, $usuario_db['clave'])) {
+        $_SESSION['usuario_id'] = $usuario_db['id_usuario'];
+        $_SESSION['nombre'] = $usuario_db['usuario'];
+        $_SESSION['rol'] = $usuario_db['rol'];
 
         // Redirigir según el rol
         if ($_SESSION['rol'] === 'admin') {
@@ -31,7 +24,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         exit();
     } else {
-        $error = 'Usuario o contraseña incorrectos';
+        $stmt = $pdo->prepare("SELECT * FROM clientes WHERE usuario = ?");
+        $stmt->execute([$usuario]);
+        $cliente_db = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($cliente_db && password_verify($clave, $cliente_db['contrasena'])) {
+            // Es un cliente
+            $_SESSION['usuario_id'] = $cliente_db['id_cliente'];
+            $_SESSION['nombre'] = $cliente_db['nombre_completo'];
+            $_SESSION['rol'] = 'cliente';
+
+            header('Location: vista-cliente.php');
+            exit();
+        } else {
+            $error = 'Usuario o contraseña incorrectos';
+        }
     }
 }
 ?>

@@ -107,3 +107,28 @@ CREATE TABLE usuarios (
     rol ENUM('admin', 'cajero', 'gerente') NOT NULL,
     FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado)
 );
+
+CREATE TABLE notificaciones (
+    id_notificacion INT AUTO_INCREMENT PRIMARY KEY,
+    id_empleado INT NOT NULL,
+    mensaje TEXT NOT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    leida BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado)
+);
+
+CREATE TABLE solicitudes_productos (
+    id_solicitud INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    tipo_producto ENUM('Cuenta', 'Tarjeta', 'Prestamo', 'Seguro') NOT NULL,
+    detalle_solicitud TEXT NOT NULL,
+    estado ENUM('Pendiente', 'Aprobada', 'Rechazada') DEFAULT 'Pendiente',
+    fecha_solicitud TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_respuesta TIMESTAMP,
+    id_empleado_respuesta INT,
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
+    FOREIGN KEY (id_empleado_respuesta) REFERENCES empleados(id_empleado)
+);
+
+ALTER TABLE clientes ADD COLUMN usuario VARCHAR(50) UNIQUE NOT NULL;
+ALTER TABLE clientes ADD COLUMN contrasena VARCHAR(255) NOT NULL;
