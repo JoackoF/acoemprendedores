@@ -1,8 +1,8 @@
 # Usa una imagen de PHP con Apache
 FROM php:8.2-apache
 
-# Instala las extensiones necesarias para MySQL
-RUN docker-php-ext-install pdo pdo_mysql
+# Instala las extensiones necesarias para MySQL y PostgreSQL
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
 
 # Habilita los logs de errores en pantalla
 RUN echo 'error_reporting = E_ALL' >> /usr/local/etc/php/conf.d/error-logging.ini \
