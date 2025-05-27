@@ -8,6 +8,22 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     exit();
 }
 
+// Obtener valores válidos de departamento desde el CHECK constraint
+$departamentos = [];
+$sql = "SELECT pg_get_constraintdef(oid) AS consrc
+        FROM pg_constraint
+        WHERE conname = 'empleados_departamento_check'";
+$res = $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+
+if ($res && isset($res['consrc'])) {
+    // Extraer los valores del CHECK usando regex
+    if (preg_match("/IN \((.*?)\)/", $res['consrc'], $matches)) {
+        $departamentos = array_map(function($v) {
+            return trim($v, " '");
+        }, explode(',', $matches[1]));
+    }
+}
+
 // Obtener lista de empleados
 $empleados = $pdo->query("SELECT * FROM empleados")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -20,9 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_empleado'])) 
     $puesto = $_POST['puesto'];
     $departamento = $_POST['departamento'];
 
+    // Generar un código de empleado (puedes ajustar la lógica)
+    $codigo_empleado = 'EMP' . rand(1000, 9999);
+
     // Insertar empleado
-    $stmt = $pdo->prepare("INSERT INTO empleados (nombre_completo, puesto, departamento) VALUES (?, ?, ?)");
-    $stmt->execute([$nombre, $puesto, $departamento]);
+    $stmt = $pdo->prepare("INSERT INTO empleados (codigo_empleado, nombre_completo, puesto, departamento) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$codigo_empleado, $nombre, $puesto, $departamento]);
     $idEmpleado = $pdo->lastInsertId();
 
     // Generar usuario y contraseña aleatorios
@@ -30,8 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_empleado'])) 
     $password = bin2hex(random_bytes(4)); // 8 caracteres hex
 
     // Guardar usuario (ajusta la tabla y campos según tu estructura)
-    $stmt = $pdo->prepare("INSERT INTO usuarios (id_empleado, usuario, contrasena) VALUES (?, ?, ?)");
-    $stmt->execute([$idEmpleado, $username, password_hash($password, PASSWORD_DEFAULT)]);
+    $stmt = $pdo->prepare("INSERT INTO usuarios (id_empleado, usuario, contrasena, rol) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$idEmpleado, $username, password_hash($password, PASSWORD_DEFAULT), 'empleado']);
 
     // Guardar credenciales para mostrar
     $_SESSION['credencialesMostrar'] = [
@@ -115,7 +134,13 @@ if (isset($_GET['eliminar'])) {
                     </div>
                     <div class="mb-4">
                         <label for="departamento" class="block text-sm font-medium text-gray-700">Departamento</label>
-                        <input type="text" name="departamento" id="departamento" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                        <select name="departamento" id="departamento" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
+        <option value="">Selecciona un departamento</option>
+        <option value="Finanzas">Finanzas</option>
+        <?php foreach ($departamentos as $dep): ?>
+            <option value="<?php echo htmlspecialchars($dep); ?>"><?php echo htmlspecialchars($dep); ?></option>
+        <?php endforeach; ?>
+    </select>
                     </div>
                     <button type="submit" name="agregar_empleado" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                         Guardar
@@ -172,7 +197,12 @@ if (isset($_GET['eliminar'])) {
                     </div>
                     <div class="mb-4">
                         <label for="editarDepartamento" class="block text-sm font-medium text-gray-700">Departamento</label>
-                        <input type="text" name="departamento" id="editarDepartamento" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                        <select name="departamento" id="editarDepartamento" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                <option value="">Selecciona un departamento</option>
+                <?php foreach ($departamentos as $dep): ?>
+                    <option value="<?php echo htmlspecialchars($dep); ?>"><?php echo htmlspecialchars($dep); ?></option>
+                <?php endforeach; ?>
+            </select>
                     </div>
                     <button type="submit" name="editar_empleado" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                         Guardar
@@ -206,11 +236,19 @@ if (isset($_GET['eliminar'])) {
 
         function mostrarFormularioEditar(id) {
             // Obtener datos del empleado
-            const empleado = <?php echo json_encode($empleados); ?>.find(e => e.id_empleado == id);
+            const empleados = <?php echo json_encode($empleados); ?>;
+            const empleado = empleados.find(e => e.id_empleado == id);
             document.getElementById('editarId').value = empleado.id_empleado;
             document.getElementById('editarNombre').value = empleado.nombre_completo;
             document.getElementById('editarPuesto').value = empleado.puesto;
-            document.getElementById('editarDepartamento').value = empleado.departamento;
+            // Seleccionar el departamento actual
+            const select = document.getElementById('editarDepartamento');
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === empleado.departamento) {
+                    select.selectedIndex = i;
+                    break;
+                }
+            }
             document.getElementById('formularioEditar').style.display = 'block';
         }
 

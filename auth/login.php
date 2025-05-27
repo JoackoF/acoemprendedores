@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         exit();
     } else {
-        // Buscar en la base de datos
+        // Buscar en la base de datos (PostgreSQL)
         $stmt = $pdo->prepare("SELECT u.*, e.nombre_completo FROM usuarios u JOIN empleados e ON u.id_empleado = e.id_empleado WHERE u.usuario = ?");
         $stmt->execute([$usuario]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);

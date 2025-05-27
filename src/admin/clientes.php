@@ -57,7 +57,7 @@ $clientes = $pdo->query("SELECT * FROM clientes")->fetchAll(PDO::FETCH_ASSOC);
 <body class="bg-gray-100">
     <div class="flex">
         <!-- Sidebar -->
-        <?php include 'sidebar.php'; ?>
+        <?php include '../partials/sidebar.php'; ?>
         <!-- Main content -->
         <div class="flex-1 p-6">
             <!-- Formulario para agregar cliente -->
