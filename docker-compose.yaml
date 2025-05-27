@@ -6,33 +6,11 @@ services:
     container_name: php-app
     ports:
       - "8080:80"
-    depends_on:
-      - mysql
     networks:
       - app-network
     volumes:
-      - ./src:/var/www/html  # Monta el directorio actual en el directorio del servidor Apache
-    restart: unless-stopped  # Reinicia automáticamente el contenedor a menos que se detenga manualmente
-
-  mysql:
-    image: mysql:8.0
-    container_name: mysql-db
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: acoeemprendedores
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: adminpassword
-    ports:
-      - "3306:3306"
-    networks:
-      - app-network
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    restart: unless-stopped  # Reinicia automáticamente el contenedor a menos que se detenga manualmente
+      - ./src:/var/www/html
+    restart: unless-stopped
 
 networks:
   app-network:
-
-volumes:
-  mysql_data:
