@@ -1,8 +1,12 @@
 # Usa una imagen de PHP con Apache
 FROM php:8.2-apache
 
-# Instala las extensiones necesarias para MySQL y PostgreSQL
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
+# Instala dependencias del sistema para PostgreSQL y luego las extensiones de PHP
+RUN apt-get update \
+    && apt-get install -y libpq-dev \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Habilita los logs de errores en pantalla
 RUN echo 'error_reporting = E_ALL' >> /usr/local/etc/php/conf.d/error-logging.ini \
