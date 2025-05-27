@@ -29,9 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Redirigir según el rol
         if ($_SESSION['rol'] === 'admin') {
-            header('Location: ../src/admin/dashboard.php');
+            header('Location: /admin/dashboard.php');
         } elseif ($_SESSION['rol'] === 'empleado') {
-            header('Location: ../src/empleado/vista-empleado.php');
+            header('Location: /empleado/vista-empleado.php');
         }
         exit();
     } else {
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['nombre'] = $user['nombre_completo'];
             $_SESSION['rol'] = 'empleado';
 
-            header('Location: ../src/empleado/vista-empleado.php');
+            header('Location: /empleado/vista-empleado.php');
             exit();
         } else {
             $error = 'Usuario o contraseña incorrectos';
