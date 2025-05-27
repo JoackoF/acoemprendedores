@@ -1,16 +1,16 @@
 <?php
 session_start();
 
+// Verificar que el usuario es un empleado
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'empleado') {
-    header('Location: login.php');
+    header('Location: ../../auth/login.php');
     exit();
 }
 
-$clientes = [
-    ['id_cliente' => 1, 'nombre_completo' => 'Juan Pérez', 'correo' => 'juan.perez@example.com', 'telefono' => '1234-5678'],
-    ['id_cliente' => 2, 'nombre_completo' => 'María López', 'correo' => 'maria.lopez@example.com', 'telefono' => '8765-4321'],
-    ['id_cliente' => 3, 'nombre_completo' => 'Carlos Gómez', 'correo' => 'carlos.gomez@example.com', 'telefono' => '5555-5555'],
-];
+require '../../database/conexion.php';
+
+// Obtener lista de clientes desde la base de datos
+$clientes = $pdo->query("SELECT id_cliente, nombre_completo, correo, telefono FROM clientes")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -23,8 +23,10 @@ $clientes = [
 </head>
 <body class="bg-gray-100">
     <div class="flex">
-        <?php include 'sidebar-empleado.php'; ?>
+        <!-- Sidebar -->
+        <?php include '../partials/sidebar-empleado.php'; ?>
 
+        <!-- Main content -->
         <div class="flex-1 p-6">
             <h1 class="text-3xl font-semibold mb-6">Clientes</h1>
 
@@ -32,7 +34,7 @@ $clientes = [
                 <a href="vista-empleado.php" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700">Regresar</a>
             </div>
 
-
+            <!-- Tabla de clientes -->
             <div class="bg-white p-6 rounded-lg shadow-lg">
                 <h2 class="text-xl font-semibold mb-4">Lista de Clientes</h2>
                 <table class="min-w-full">

@@ -1,16 +1,27 @@
 <?php
 session_start();
 
+// Verificar que el usuario es un empleado
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'empleado') {
-    header('Location: login.php');
+    header('Location: ../../auth/login.php');
     exit();
 }
 
-$transacciones = [
-    ['id_transaccion' => 1, 'monto' => 150.75, 'fecha_transaccion' => '2023-10-01', 'cliente' => 'Juan Pérez'],
-    ['id_transaccion' => 2, 'monto' => 200.50, 'fecha_transaccion' => '2023-10-02', 'cliente' => 'María López'],
-    ['id_transaccion' => 3, 'monto' => 300.00, 'fecha_transaccion' => '2023-10-03', 'cliente' => 'Carlos Gómez'],
-];
+require '../../database/conexion.php';
+
+// Consulta dinámica de transacciones
+$stmt = $pdo->query("
+    SELECT 
+        t.id_transaccion, 
+        t.monto, 
+        t.fecha_transaccion, 
+        c.nombre_completo AS cliente
+    FROM transacciones t
+    JOIN productos_financieros pf ON t.id_producto = pf.id_producto
+    JOIN clientes c ON pf.id_cliente = c.id_cliente
+    ORDER BY t.fecha_transaccion DESC
+");
+$transacciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -23,8 +34,10 @@ $transacciones = [
 </head>
 <body class="bg-gray-100">
     <div class="flex">
-        <?php include 'sidebar-empleado.php'; ?>
+        <!-- Sidebar -->
+        <?php include '../partials/sidebar-empleado.php'; ?>
 
+        <!-- Main content -->
         <div class="flex-1 p-6">
             <h1 class="text-3xl font-semibold mb-6">Transacciones</h1>
 
@@ -32,6 +45,7 @@ $transacciones = [
                 <a href="vista-empleado.php" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700">Regresar</a>
             </div>
 
+            <!-- Tabla de transacciones -->
             <div class="bg-white p-6 rounded-lg shadow-lg">
                 <h2 class="text-xl font-semibold mb-4">Lista de Transacciones</h2>
                 <table class="min-w-full">

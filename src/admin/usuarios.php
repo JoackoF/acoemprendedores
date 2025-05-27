@@ -1,12 +1,14 @@
 <?php
 session_start();
-require 'conexion.php';
+require '../../database/conexion.php';
 
+// Verificar que el usuario es un administrador
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header('Location: login.php');
+    header('Location: ../../auth/login.php');
     exit();
 }
 
+// Obtener lista de usuarios
 $usuarios = $pdo->query("SELECT u.id_usuario, u.usuario, u.rol, e.nombre_completo 
                          FROM usuarios u
                          JOIN empleados e ON u.id_empleado = e.id_empleado")->fetchAll(PDO::FETCH_ASSOC);
@@ -22,8 +24,10 @@ $usuarios = $pdo->query("SELECT u.id_usuario, u.usuario, u.rol, e.nombre_complet
 </head>
 <body class="bg-gray-100">
     <div class="flex">
-        <?php include 'sidebar.php'; ?>
+        <!-- Sidebar -->
+        <?php include '../partials/sidebar.php'; ?>
 
+        <!-- Main content -->
         <div class="flex-1 p-6">
             <h1 class="text-3xl font-semibold mb-6">Usuarios</h1>
 

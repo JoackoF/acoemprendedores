@@ -1,40 +1,51 @@
 <?php
 session_start();
+require '../database/conexion.php'; // Asegúrate de tener la conexión PDO en este archivo
 
-require 'conexion.php';
+// Datos quemados para pruebas
+$usuarios = [
+    'admin' => [
+        'clave' => 'admin123',
+        'nombre' => 'Administrador',
+        'rol' => 'admin',
+    ],
+    'empleado' => [
+        'clave' => 'empleado123',
+        'nombre' => 'Ana Martínez',
+        'rol' => 'empleado',
+    ],
+];
 
+// Procesar el formulario de login
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $usuario = $_POST['usuario'] ?? '';
     $clave = $_POST['clave'] ?? '';
 
-    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE usuario = ?");
-    $stmt->execute([$usuario]);
-    $usuario_db = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($usuario_db && password_verify($clave, $usuario_db['clave'])) {
-        $_SESSION['usuario_id'] = $usuario_db['id_usuario'];
-        $_SESSION['nombre'] = $usuario_db['usuario'];
-        $_SESSION['rol'] = $usuario_db['rol'];
+    // Verificar si el usuario es uno de los quemados
+    if (isset($usuarios[$usuario]) && $usuarios[$usuario]['clave'] === $clave) {
+        $_SESSION['usuario_id'] = 1; // ID de ejemplo
+        $_SESSION['nombre'] = $usuarios[$usuario]['nombre'];
+        $_SESSION['rol'] = $usuarios[$usuario]['rol'];
 
         // Redirigir según el rol
         if ($_SESSION['rol'] === 'admin') {
-            header('Location: dashboard.php');
+            header('Location: ../src/admin/dashboard.php');
         } elseif ($_SESSION['rol'] === 'empleado') {
-            header('Location: vista-empleado.php');
+            header('Location: ../src/empleado/vista-empleado.php');
         }
         exit();
     } else {
-        $stmt = $pdo->prepare("SELECT * FROM clientes WHERE usuario = ?");
+        // Buscar en la base de datos
+        $stmt = $pdo->prepare("SELECT u.*, e.nombre_completo FROM usuarios u JOIN empleados e ON u.id_empleado = e.id_empleado WHERE u.usuario = ?");
         $stmt->execute([$usuario]);
-        $cliente_db = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($cliente_db && password_verify($clave, $cliente_db['contrasena'])) {
-            // Es un cliente
-            $_SESSION['usuario_id'] = $cliente_db['id_cliente'];
-            $_SESSION['nombre'] = $cliente_db['nombre_completo'];
-            $_SESSION['rol'] = 'cliente';
+        if ($user && password_verify($clave, $user['contrasena'])) {
+            $_SESSION['usuario_id'] = $user['id_usuario'];
+            $_SESSION['nombre'] = $user['nombre_completo'];
+            $_SESSION['rol'] = 'empleado';
 
-            header('Location: vista-cliente.php');
+            header('Location: ../src/empleado/vista-empleado.php');
             exit();
         } else {
             $error = 'Usuario o contraseña incorrectos';
