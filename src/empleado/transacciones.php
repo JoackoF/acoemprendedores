@@ -7,7 +7,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'empleado') {
     exit();
 }
 
-require '../../database/conexion.php';
+require '../database/conexion.php';
 
 // Consulta dinámica de transacciones
 $stmt = $pdo->query("

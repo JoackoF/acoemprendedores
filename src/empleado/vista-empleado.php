@@ -111,7 +111,7 @@ $ultimasTransacciones = $pdo->query("SELECT t.id_transaccion, t.monto, t.fecha_t
             <h1 class="text-3xl font-semibold mb-6">Bienvenido, <?php echo htmlspecialchars($_SESSION['nombre']); ?></h1>
 
             <div class="mb-6">
-                <a href="../../auth/logout.php" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Cerrar Sesión</a>
+                <a href="../auth/logout.php" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Cerrar Sesión</a>
             </div>
 
             <!-- Estadísticas básicas -->
