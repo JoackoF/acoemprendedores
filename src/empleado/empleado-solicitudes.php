@@ -1,9 +1,9 @@
 <?php
 session_start();
-require '../../database/conexion.php';
+require '../database/conexion.php';
 
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'empleado') {
-    header('Location: ../../auth/login.php');
+    header('Location: ../auth/login.php');
     exit();
 }
 

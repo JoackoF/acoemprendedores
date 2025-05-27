@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../../database/conexion.php';
+require '../database/conexion.php';
 
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'empleado') {
     http_response_code(403);

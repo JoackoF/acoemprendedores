@@ -1,10 +1,10 @@
 <?php
 session_start();
-require '../../database/conexion.php';
+require '../database/conexion.php';
 
 // Verifica que el usuario es cliente
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'cliente') {
-    header('Location: ../../auth/login.php');
+    header('Location: ../auth/login.php');
     exit();
 }
 

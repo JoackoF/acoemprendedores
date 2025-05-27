@@ -3,11 +3,11 @@ session_start();
 
 // Verificar que el usuario es un empleado
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'empleado') {
-    header('Location: ../../auth/login.php');
+    header('Location: ../auth/login.php');
     exit();
 }
 
-require '../../database/conexion.php';
+require '../database/conexion.php';
 
 // Obtener lista de clientes desde la base de datos
 $clientes = $pdo->query("SELECT id_cliente, nombre_completo, correo, telefono FROM clientes")->fetchAll(PDO::FETCH_ASSOC);

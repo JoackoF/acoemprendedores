@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../../database/conexion.php';
+require '../database/conexion.php';
 
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'empleado' || !isset($_SESSION['aprobar_solicitud'])) {
     header('Location: empleado-solicitudes.php');

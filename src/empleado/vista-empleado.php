@@ -3,11 +3,11 @@ session_start();
 
 // Verificar que el usuario es un empleado
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'empleado') {
-    header('Location: ../../auth/login.php');
+    header('Location: ../auth/login.php');
     exit();
 }
 
-require '../../database/conexion.php';
+require '../database/conexion.php';
 
 // Procesar formulario para registrar un cliente
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_cliente'])) {

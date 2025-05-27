@@ -3,7 +3,7 @@ session_start();
 
 // Verificar que el usuario es un empleado
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'empleado') {
-    header('Location: ../../auth/login.php');
+    header('Location: ../auth/login.php');
     exit();
 }
 

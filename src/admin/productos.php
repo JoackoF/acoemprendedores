@@ -1,10 +1,10 @@
 <?php
 session_start();
-require '../../database/conexion.php';
+require '../database/conexion.php';
 
 // Verificar que el usuario es un administrador
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header('Location: ../../auth/login.php');
+    header('Location: ../auth/login.php');
     exit();
 }
 
