@@ -90,21 +90,18 @@ if (isset($_GET['eliminar'])) {
                 <form method="POST" class="bg-white p-6 rounded-lg shadow-lg">
                     <h2 class="text-xl font-semibold mb-4">Agregar Producto Financiero</h2>
                     <div class="mb-4">
-                        <label for="tipo_producto" class="block text-sm font-medium text-gray-700">Tipo de
-                            Producto</label>
+                        <label for="tipo_producto" class="block text-sm font-medium text-gray-700">Tipo de Producto</label>
                         <select name="tipo_producto" id="tipo_producto"
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required
+                            onchange="mostrarCamposPorTipo()">
+                            <option value="">Seleccione</option>
                             <option value="Cuenta">Cuenta</option>
                             <option value="Tarjeta">Tarjeta</option>
                             <option value="Prestamo">Préstamo</option>
                             <option value="Seguro">Seguro</option>
                         </select>
                     </div>
-                    <div class="mb-4">
-                        <label for="detalle_producto" class="block text-sm font-medium text-gray-700">Detalles</label>
-                        <textarea name="detalle_producto" id="detalle_producto"
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required></textarea>
-                    </div>
+                    <!-- Campos comunes -->
                     <div class="mb-4">
                         <label for="id_cliente" class="block text-sm font-medium text-gray-700">Cliente</label>
                         <select name="id_cliente" id="id_cliente"
@@ -114,6 +111,37 @@ if (isset($_GET['eliminar'])) {
                                     <?php echo htmlspecialchars($cliente['nombre_completo']); ?></option>
                             <?php endforeach; ?>
                         </select>
+                    </div>
+                    <!-- Campos específicos por tipo -->
+                    <div id="camposCuenta" class="mb-4 hidden">
+                        <label class="block text-sm font-medium text-gray-700">Monto de apertura</label>
+                        <input type="number" name="monto_apertura" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div id="camposTarjeta" class="mb-4 hidden">
+                        <label class="block text-sm font-medium text-gray-700">Red</label>
+                        <select id="tipo_red" name="tipo_red" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" onchange="generarNumeroTarjeta()">
+                            <option value="">Seleccione</option>
+                            <option value="Visa">Visa</option>
+                            <option value="MasterCard">MasterCard</option>
+                        </select>
+                        <label class="block text-sm font-medium text-gray-700 mt-2">Número de tarjeta</label>
+                        <input type="text" id="numero_tarjeta" name="numero_tarjeta" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" readonly>
+                        <!-- Otros campos de tarjeta aquí -->
+                    </div>
+                    <div id="camposPrestamo" class="mb-4 hidden">
+                        <label class="block text-sm font-medium text-gray-700">Monto otorgado</label>
+                        <input type="number" name="monto_otorgado" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <!-- Otros campos de préstamo aquí -->
+                    </div>
+                    <div id="camposSeguro" class="mb-4 hidden">
+                        <label class="block text-sm font-medium text-gray-700">Monto asegurado</label>
+                        <input type="number" name="monto_asegurado" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <!-- Otros campos de seguro aquí -->
+                    </div>
+                    <div class="mb-4">
+                        <label for="detalle_producto" class="block text-sm font-medium text-gray-700">Detalles</label>
+                        <textarea name="detalle_producto" id="detalle_producto"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required></textarea>
                     </div>
                     <button type="submit" name="agregar_producto"
                         class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
@@ -227,6 +255,26 @@ if (isset($_GET['eliminar'])) {
 
         function ocultarFormularioEditar() {
             document.getElementById('formularioEditar').style.display = 'none';
+        }
+
+        function mostrarCamposPorTipo() {
+            const tipo = document.getElementById('tipo_producto').value;
+            document.getElementById('camposCuenta').style.display = tipo === 'Cuenta' ? 'block' : 'none';
+            document.getElementById('camposTarjeta').style.display = tipo === 'Tarjeta' ? 'block' : 'none';
+            document.getElementById('camposPrestamo').style.display = tipo === 'Prestamo' ? 'block' : 'none';
+            document.getElementById('camposSeguro').style.display = tipo === 'Seguro' ? 'block' : 'none';
+        }
+
+        function generarNumeroTarjeta() {
+            const red = document.getElementById('tipo_red').value;
+            let numero = '';
+            if (red === 'Visa') {
+                numero = '4' + Math.floor(100000000000000 + Math.random() * 900000000000000); // 16 dígitos, empieza con 4
+            } else if (red === 'MasterCard') {
+                const prefix = ['51','52','53','54','55'][Math.floor(Math.random()*5)];
+                numero = prefix + Math.floor(100000000000000 + Math.random() * 900000000000000); // 16 dígitos, empieza con 51-55
+            }
+            document.getElementById('numero_tarjeta').value = numero;
         }
     </script>
 </body>

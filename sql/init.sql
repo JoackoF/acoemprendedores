@@ -12,9 +12,7 @@ CREATE TABLE clientes (
     lugar_trabajo VARCHAR(100),
     direccion_trabajo TEXT,
     salario_mensual DECIMAL(10,2),
-    otros_ingresos DECIMAL(10,2),
-    usuario VARCHAR(50) UNIQUE,
-    contrasena VARCHAR(255)
+    otros_ingresos DECIMAL(10,2)
 );
 
 CREATE TABLE cuentas (

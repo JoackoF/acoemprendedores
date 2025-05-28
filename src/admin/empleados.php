@@ -32,16 +32,25 @@ $credencialesMostrar = null;
 
 // Procesar formulario para agregar empleado
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_empleado'])) {
-    $nombre = $_POST['nombre'];
+    $nombre = $_POST['nombre_completo'];
+    $estado = $_POST['estado_familiar'];
+    $documento = $_POST['documento_identidad'];
+    $fecha_nacimiento = $_POST['fecha_nacimiento'];
+    $edad = $_POST['edad'];
+    $direccion = $_POST['direccion'];
     $puesto = $_POST['puesto'];
     $departamento = $_POST['departamento'];
+    $sueldo = $_POST['sueldo'];
+    $profesion = $_POST['profesion'];
+    $correo = $_POST['correo'];
+    $telefono = $_POST['telefono'];
 
     // Generar un código de empleado (puedes ajustar la lógica)
     $codigo_empleado = 'EMP' . rand(1000, 9999);
 
     // Insertar empleado
-    $stmt = $pdo->prepare("INSERT INTO empleados (codigo_empleado, nombre_completo, puesto, departamento) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$codigo_empleado, $nombre, $puesto, $departamento]);
+    $stmt = $pdo->prepare("INSERT INTO empleados (codigo_empleado, nombre_completo, estado_familiar, documento_identidad, fecha_nacimiento, edad, direccion, puesto, departamento, sueldo, profesion, correo, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$codigo_empleado, $nombre, $estado, $documento, $fecha_nacimiento, $edad, $direccion, $puesto, $departamento, $sueldo, $profesion, $correo, $telefono]);
     $idEmpleado = $pdo->lastInsertId();
 
     // Generar usuario y contraseña aleatorios
@@ -70,13 +79,22 @@ if (isset($_SESSION['credencialesMostrar'])) {
 
 // Procesar formulario para editar empleado
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editar_empleado'])) {
-    $id = $_POST['id'];
-    $nombre = $_POST['nombre'];
+    $id = $_POST['id_empleado'];
+    $nombre = $_POST['nombre_completo'];
+    $estado = $_POST['estado_familiar'];
+    $documento = $_POST['documento_identidad'];
+    $fecha_nacimiento = $_POST['fecha_nacimiento'];
+    $edad = $_POST['edad'];
+    $direccion = $_POST['direccion'];
     $puesto = $_POST['puesto'];
     $departamento = $_POST['departamento'];
+    $sueldo = $_POST['sueldo'];
+    $profesion = $_POST['profesion'];
+    $correo = $_POST['correo'];
+    $telefono = $_POST['telefono'];
 
-    $stmt = $pdo->prepare("UPDATE empleados SET nombre_completo = ?, puesto = ?, departamento = ? WHERE id_empleado = ?");
-    $stmt->execute([$nombre, $puesto, $departamento, $id]);
+    $stmt = $pdo->prepare("UPDATE empleados SET nombre_completo=?, estado_familiar=?, documento_identidad=?, fecha_nacimiento=?, edad=?, direccion=?, puesto=?, departamento=?, sueldo=?, profesion=?, correo=?, telefono=? WHERE id_empleado=?");
+    $stmt->execute([$nombre, $estado, $documento, $fecha_nacimiento, $edad, $direccion, $puesto, $departamento, $sueldo, $profesion, $correo, $telefono, $id]);
 
     header('Location: empleados.php');
     exit();
@@ -120,35 +138,159 @@ if (isset($_GET['eliminar'])) {
                 Agregar Empleado
             </button>
 
-            <!-- Formulario para agregar empleado (oculto por defecto) -->
-            <div id="formularioAgregar" class="hidden mb-6">
-                <form method="POST" class="bg-white p-6 rounded-lg shadow-lg">
+            <!-- Modal para agregar empleado -->
+            <div id="modalEmpleado" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl relative">
+                    <button onclick="cerrarModalEmpleado()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
                     <h2 class="text-xl font-semibold mb-4">Agregar Empleado</h2>
-                    <div class="mb-4">
-                        <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
-                        <input type="text" name="nombre" id="nombre" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="puesto" class="block text-sm font-medium text-gray-700">Puesto</label>
-                        <input type="text" name="puesto" id="puesto" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="departamento" class="block text-sm font-medium text-gray-700">Departamento</label>
-                        <select name="departamento" id="departamento" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
-        <option value="">Selecciona un departamento</option>
-        <option value="Finanzas">Finanzas</option>
-        <?php foreach ($departamentos as $dep): ?>
-            <option value="<?php echo htmlspecialchars($dep); ?>"><?php echo htmlspecialchars($dep); ?></option>
-        <?php endforeach; ?>
-    </select>
-                    </div>
-                    <button type="submit" name="agregar_empleado" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
-                        Guardar
-                    </button>
-                    <button type="button" onclick="ocultarFormularioAgregar()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-                        Cancelar
-                    </button>
-                </form>
+                    <form method="POST" autocomplete="off" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium">Nombre completo</label>
+                            <input type="text" name="nombre_completo" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Estado familiar</label>
+                            <select name="estado_familiar" required class="w-full border px-3 py-2 rounded">
+                                <option value="">Seleccione</option>
+                                <option value="Soltero">Soltero</option>
+                                <option value="Casado">Casado</option>
+                                <option value="Divorciado">Divorciado</option>
+                                <option value="Viudo">Viudo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Documento de identidad</label>
+                            <input type="text" name="documento_identidad" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Fecha de nacimiento</label>
+                            <input type="date" name="fecha_nacimiento" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Edad</label>
+                            <input type="number" name="edad" min="0" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Dirección</label>
+                            <input type="text" name="direccion" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Puesto</label>
+                            <input type="text" name="puesto" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Departamento</label>
+                            <select name="departamento" required class="w-full border px-3 py-2 rounded">
+                                <option value="">Seleccione</option>
+                                <?php foreach ($departamentos as $dep): ?>
+                                    <option value="<?php echo htmlspecialchars($dep); ?>"><?php echo htmlspecialchars($dep); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Sueldo</label>
+                            <input type="number" step="0.01" name="sueldo" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Profesión</label>
+                            <input type="text" name="profesion" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Correo</label>
+                            <input type="email" name="correo" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Teléfono</label>
+                            <input type="text" name="telefono" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div class="md:col-span-2 flex justify-end space-x-2 mt-4">
+                            <button type="submit" name="agregar_empleado" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                Guardar
+                            </button>
+                            <button type="button" onclick="cerrarModalEmpleado()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal para editar empleado -->
+            <div id="modalEditarEmpleado" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl relative">
+                    <button onclick="cerrarModalEditarEmpleado()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    <h2 class="text-xl font-semibold mb-4">Editar Empleado</h2>
+                    <form method="POST" autocomplete="off" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="hidden" name="id_empleado" id="editar_id_empleado">
+                        <div>
+                            <label class="block text-sm font-medium">Nombre completo</label>
+                            <input type="text" name="nombre_completo" id="editar_nombre_completo" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Estado familiar</label>
+                            <select name="estado_familiar" id="editar_estado_familiar" required class="w-full border px-3 py-2 rounded">
+                                <option value="">Seleccione</option>
+                                <option value="Soltero">Soltero</option>
+                                <option value="Casado">Casado</option>
+                                <option value="Divorciado">Divorciado</option>
+                                <option value="Viudo">Viudo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Documento de identidad</label>
+                            <input type="text" name="documento_identidad" id="editar_documento_identidad" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Fecha de nacimiento</label>
+                            <input type="date" name="fecha_nacimiento" id="editar_fecha_nacimiento" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Edad</label>
+                            <input type="number" name="edad" id="editar_edad" min="0" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Dirección</label>
+                            <input type="text" name="direccion" id="editar_direccion" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Puesto</label>
+                            <input type="text" name="puesto" id="editar_puesto" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Departamento</label>
+                            <select name="departamento" id="editar_departamento" required class="w-full border px-3 py-2 rounded">
+                                <option value="">Seleccione</option>
+                                <?php foreach ($departamentos as $dep): ?>
+                                    <option value="<?php echo htmlspecialchars($dep); ?>"><?php echo htmlspecialchars($dep); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Sueldo</label>
+                            <input type="number" step="0.01" name="sueldo" id="editar_sueldo" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Profesión</label>
+                            <input type="text" name="profesion" id="editar_profesion" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Correo</label>
+                            <input type="email" name="correo" id="editar_correo" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Teléfono</label>
+                            <input type="text" name="telefono" id="editar_telefono" required class="w-full border px-3 py-2 rounded" />
+                        </div>
+                        <div class="md:col-span-2 flex justify-end space-x-2 mt-4">
+                            <button type="submit" name="editar_empleado" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+                                Guardar cambios
+                            </button>
+                            <button type="button" onclick="cerrarModalEditarEmpleado()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <!-- Tabla de empleados -->
@@ -169,7 +311,23 @@ if (isset($_GET['eliminar'])) {
                             <td class="px-6 py-4"><?php echo htmlspecialchars($empleado['departamento']); ?></td>
                             <td class="px-6 py-4">
                                 <!-- Botón para editar empleado -->
-                                <button onclick="mostrarFormularioEditar(<?php echo $empleado['id_empleado']; ?>)" class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">
+                                <button
+                                    onclick="abrirModalEditarEmpleado(
+                                        <?php echo $empleado['id_empleado']; ?>,
+                                        '<?php echo htmlspecialchars(addslashes($empleado['nombre_completo'])); ?>',
+                                        '<?php echo $empleado['estado_familiar']; ?>',
+                                        '<?php echo htmlspecialchars(addslashes($empleado['documento_identidad'])); ?>',
+                                        '<?php echo $empleado['fecha_nacimiento']; ?>',
+                                        '<?php echo $empleado['edad']; ?>',
+                                        '<?php echo htmlspecialchars(addslashes($empleado['direccion'])); ?>',
+                                        '<?php echo htmlspecialchars(addslashes($empleado['puesto'])); ?>',
+                                        '<?php echo htmlspecialchars(addslashes($empleado['departamento'])); ?>',
+                                        '<?php echo $empleado['sueldo']; ?>',
+                                        '<?php echo htmlspecialchars(addslashes($empleado['profesion'])); ?>',
+                                        '<?php echo htmlspecialchars(addslashes($empleado['correo'])); ?>',
+                                        '<?php echo htmlspecialchars(addslashes($empleado['telefono'])); ?>'
+                                    )"
+                                    class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">
                                     Editar
                                 </button>
                                 <!-- Botón para eliminar empleado -->
@@ -181,37 +339,6 @@ if (isset($_GET['eliminar'])) {
                     <?php endforeach; ?>
                 </tbody>
             </table>
-
-            <!-- Formulario para editar empleado (oculto por defecto) -->
-            <div id="formularioEditar" class="hidden mb-6">
-                <form method="POST" class="bg-white p-6 rounded-lg shadow-lg">
-                    <h2 class="text-xl font-semibold mb-4">Editar Empleado</h2>
-                    <input type="hidden" name="id" id="editarId">
-                    <div class="mb-4">
-                        <label for="editarNombre" class="block text-sm font-medium text-gray-700">Nombre</label>
-                        <input type="text" name="nombre" id="editarNombre" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="editarPuesto" class="block text-sm font-medium text-gray-700">Puesto</label>
-                        <input type="text" name="puesto" id="editarPuesto" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="editarDepartamento" class="block text-sm font-medium text-gray-700">Departamento</label>
-                        <select name="departamento" id="editarDepartamento" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
-                <option value="">Selecciona un departamento</option>
-                <?php foreach ($departamentos as $dep): ?>
-                    <option value="<?php echo htmlspecialchars($dep); ?>"><?php echo htmlspecialchars($dep); ?></option>
-                <?php endforeach; ?>
-            </select>
-                    </div>
-                    <button type="submit" name="editar_empleado" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
-                        Guardar
-                    </button>
-                    <button type="button" onclick="ocultarFormularioEditar()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-                        Cancelar
-                    </button>
-                </form>
-            </div>
 
             <!-- Mostrar credenciales generadas -->
             <?php if ($credencialesMostrar): ?>
@@ -227,7 +354,11 @@ if (isset($_GET['eliminar'])) {
     <script>
         // Mostrar y ocultar formularios
         function mostrarFormularioAgregar() {
-            document.getElementById('formularioAgregar').style.display = 'block';
+            document.getElementById('modalEmpleado').classList.remove('hidden');
+        }
+
+        function cerrarModalEmpleado() {
+            document.getElementById('modalEmpleado').classList.add('hidden');
         }
 
         function ocultarFormularioAgregar() {
@@ -252,8 +383,59 @@ if (isset($_GET['eliminar'])) {
             document.getElementById('formularioEditar').style.display = 'block';
         }
 
-        function ocultarFormularioEditar() {
-            document.getElementById('formularioEditar').style.display = 'none';
+        function cerrarModalEditarEmpleado() {
+            document.getElementById('modalEditarEmpleado').classList.add('hidden');
+        }
+
+        function mostrarModalEditarEmpleado(id) {
+            // Obtener datos del empleado
+            const empleados = <?php echo json_encode($empleados); ?>;
+            const empleado = empleados.find(e => e.id_empleado == id);
+
+            // Llenar el formulario con los datos del empleado
+            document.getElementById('editar_id_empleado').value = empleado.id_empleado;
+            document.getElementById('editar_nombre_completo').value = empleado.nombre_completo;
+            document.getElementById('editar_estado_familiar').value = empleado.estado_familiar;
+            document.getElementById('editar_documento_identidad').value = empleado.documento_identidad;
+            document.getElementById('editar_fecha_nacimiento').value = empleado.fecha_nacimiento;
+            document.getElementById('editar_edad').value = empleado.edad;
+            document.getElementById('editar_direccion').value = empleado.direccion;
+            document.getElementById('editar_puesto').value = empleado.puesto;
+            document.getElementById('editar_departamento').value = empleado.departamento;
+            document.getElementById('editar_sueldo').value = empleado.sueldo;
+            document.getElementById('editar_profesion').value = empleado.profesion;
+            document.getElementById('editar_correo').value = empleado.correo;
+            document.getElementById('editar_telefono').value = empleado.telefono;
+
+            document.getElementById('modalEditarEmpleado').classList.remove('hidden');
+        }
+
+        function abrirModalEmpleado() {
+            document.getElementById('modalEmpleado').classList.remove('hidden');
+        }
+        function cerrarModalEmpleado() {
+            document.getElementById('modalEmpleado').classList.add('hidden');
+        }
+        function abrirModalEditarEmpleado(
+            id, nombre, estado, documento, fecha_nacimiento, edad, direccion, puesto, departamento, sueldo, profesion, correo, telefono
+        ) {
+            document.getElementById('editar_id_empleado').value = id;
+            document.getElementById('editar_nombre_completo').value = nombre;
+            document.getElementById('editar_estado_familiar').value = estado;
+            document.getElementById('editar_documento_identidad').value = documento;
+            document.getElementById('editar_fecha_nacimiento').value = fecha_nacimiento;
+            document.getElementById('editar_edad').value = edad;
+            document.getElementById('editar_direccion').value = direccion;
+            document.getElementById('editar_puesto').value = puesto;
+            document.getElementById('editar_departamento').value = departamento;
+            document.getElementById('editar_sueldo').value = sueldo;
+            document.getElementById('editar_profesion').value = profesion;
+            document.getElementById('editar_correo').value = correo;
+            document.getElementById('editar_telefono').value = telefono;
+            document.getElementById('modalEditarEmpleado').classList.remove('hidden');
+        }
+        function cerrarModalEditarEmpleado() {
+            document.getElementById('modalEditarEmpleado').classList.add('hidden');
         }
     </script>
 </body>
