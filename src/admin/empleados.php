@@ -8,13 +8,6 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     exit();
 }
 
-// Obtener valores válidos de departamento desde el CHECK constraint
-$departamentos = [];
-$sql = "SELECT pg_get_constraintdef(oid) AS consrc
-        FROM pg_constraint
-        WHERE conname = 'empleados_departamento_check'";
-$res = $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
-
 if ($res && isset($res['consrc'])) {
     // Extraer los valores del CHECK usando regex
     if (preg_match("/IN \((.*?)\)/", $res['consrc'], $matches)) {
@@ -54,8 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_empleado'])) 
     $idEmpleado = $pdo->lastInsertId();
 
     // Generar usuario y contraseña aleatorios
-    $username = strtolower(explode(' ', trim($nombre))[0]) . rand(100, 999);
-    $password = bin2hex(random_bytes(4)); // 8 caracteres hex
+    $username = strtolower(explode(' ', trim($nombre))[0]) . rand(min: 100, max: 999);
+    $password = bin2hex(random_bytes(length: 4)); // 8 caracteres hex
 
     // Guardar usuario (ajusta la tabla y campos según tu estructura)
     $stmt = $pdo->prepare("INSERT INTO usuarios (id_empleado, usuario, contrasena, rol) VALUES (?, ?, ?, ?)");
