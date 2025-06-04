@@ -18,7 +18,7 @@ $res = $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
 if ($res && isset($res['consrc'])) {
     // Extraer los valores del CHECK usando regex
     if (preg_match("/IN \((.*?)\)/", $res['consrc'], $matches)) {
-        $departamentos = array_map(function($v) {
+        $departamentos = array_map(function ($v) {
             return trim($v, " '");
         }, explode(',', $matches[1]));
     }
@@ -114,12 +114,14 @@ if (isset($_GET['eliminar'])) {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Empleados - ACOEMPRENDEDORES</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100">
     <div class="flex">
         <!-- Sidebar -->
@@ -130,23 +132,28 @@ if (isset($_GET['eliminar'])) {
             <h1 class="text-3xl font-semibold mb-6">Empleados</h1>
 
             <div class="mb-6">
-                <a href="dashboard.php" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700">Regresar</a>
+                <a href="dashboard.php"
+                    class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700">Regresar</a>
             </div>
 
             <!-- Botón para agregar empleado -->
-            <button onclick="mostrarFormularioAgregar()" class="bg-blue-500 text-white px-4 py-2 rounded-md mb-6 hover:bg-blue-600">
+            <button onclick="mostrarFormularioAgregar()"
+                class="bg-blue-500 text-white px-4 py-2 rounded-md mb-6 hover:bg-blue-600">
                 Agregar Empleado
             </button>
 
             <!-- Modal para agregar empleado -->
-            <div id="modalEmpleado" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div id="modalEmpleado"
+                class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
                 <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl relative">
-                    <button onclick="cerrarModalEmpleado()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    <button onclick="cerrarModalEmpleado()"
+                        class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
                     <h2 class="text-xl font-semibold mb-4">Agregar Empleado</h2>
                     <form method="POST" autocomplete="off" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium">Nombre completo</label>
-                            <input type="text" name="nombre_completo" required class="w-full border px-3 py-2 rounded" />
+                            <input type="text" name="nombre_completo" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Estado familiar</label>
@@ -160,11 +167,13 @@ if (isset($_GET['eliminar'])) {
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Documento de identidad</label>
-                            <input type="text" name="documento_identidad" required class="w-full border px-3 py-2 rounded" />
+                            <input type="text" name="documento_identidad" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Fecha de nacimiento</label>
-                            <input type="date" name="fecha_nacimiento" required class="w-full border px-3 py-2 rounded" />
+                            <input type="date" name="fecha_nacimiento" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Edad</label>
@@ -182,14 +191,26 @@ if (isset($_GET['eliminar'])) {
                             <label class="block text-sm font-medium">Departamento</label>
                             <select name="departamento" required class="w-full border px-3 py-2 rounded">
                                 <option value="">Seleccione</option>
-                                <?php foreach ($departamentos as $dep): ?>
-                                    <option value="<?php echo htmlspecialchars($dep); ?>"><?php echo htmlspecialchars($dep); ?></option>
-                                <?php endforeach; ?>
+                                <option value="Ahuachapan">Ahuachapán</option>
+                                <option value="Cabanas">Cabañas</option>
+                                <option value="Chalatenango">Chalatenango</option>
+                                <option value="Cuscatlan">Cuscatlán</option>
+                                <option value="La Libertad">La Libertad</option>
+                                <option value="La Paz">La Paz</option>
+                                <option value="La Union">La Unión</option>
+                                <option value="Morazan">Morazán</option>
+                                <option value="San Miguel">San Miguel</option>
+                                <option value="San Salvador">San Salvador</option>
+                                <option value="San Vicente">San Vicente</option>
+                                <option value="Santa Ana">Santa Ana</option>
+                                <option value="Sonsonate">Sonsonate</option>
+                                <option value="Usulutan">Usulután</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Sueldo</label>
-                            <input type="number" step="0.01" name="sueldo" required class="w-full border px-3 py-2 rounded" />
+                            <input type="number" step="0.01" name="sueldo" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Profesión</label>
@@ -204,10 +225,12 @@ if (isset($_GET['eliminar'])) {
                             <input type="text" name="telefono" required class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div class="md:col-span-2 flex justify-end space-x-2 mt-4">
-                            <button type="submit" name="agregar_empleado" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                            <button type="submit" name="agregar_empleado"
+                                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
                                 Guardar
                             </button>
-                            <button type="button" onclick="cerrarModalEmpleado()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                            <button type="button" onclick="cerrarModalEmpleado()"
+                                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
                                 Cancelar
                             </button>
                         </div>
@@ -216,19 +239,23 @@ if (isset($_GET['eliminar'])) {
             </div>
 
             <!-- Modal para editar empleado -->
-            <div id="modalEditarEmpleado" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div id="modalEditarEmpleado"
+                class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
                 <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl relative">
-                    <button onclick="cerrarModalEditarEmpleado()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    <button onclick="cerrarModalEditarEmpleado()"
+                        class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
                     <h2 class="text-xl font-semibold mb-4">Editar Empleado</h2>
                     <form method="POST" autocomplete="off" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <input type="hidden" name="id_empleado" id="editar_id_empleado">
                         <div>
                             <label class="block text-sm font-medium">Nombre completo</label>
-                            <input type="text" name="nombre_completo" id="editar_nombre_completo" required class="w-full border px-3 py-2 rounded" />
+                            <input type="text" name="nombre_completo" id="editar_nombre_completo" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Estado familiar</label>
-                            <select name="estado_familiar" id="editar_estado_familiar" required class="w-full border px-3 py-2 rounded">
+                            <select name="estado_familiar" id="editar_estado_familiar" required
+                                class="w-full border px-3 py-2 rounded">
                                 <option value="">Seleccione</option>
                                 <option value="Soltero">Soltero</option>
                                 <option value="Casado">Casado</option>
@@ -238,54 +265,67 @@ if (isset($_GET['eliminar'])) {
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Documento de identidad</label>
-                            <input type="text" name="documento_identidad" id="editar_documento_identidad" required class="w-full border px-3 py-2 rounded" />
+                            <input type="text" name="documento_identidad" id="editar_documento_identidad" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Fecha de nacimiento</label>
-                            <input type="date" name="fecha_nacimiento" id="editar_fecha_nacimiento" required class="w-full border px-3 py-2 rounded" />
+                            <input type="date" name="fecha_nacimiento" id="editar_fecha_nacimiento" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Edad</label>
-                            <input type="number" name="edad" id="editar_edad" min="0" required class="w-full border px-3 py-2 rounded" />
+                            <input type="number" name="edad" id="editar_edad" min="0" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Dirección</label>
-                            <input type="text" name="direccion" id="editar_direccion" required class="w-full border px-3 py-2 rounded" />
+                            <input type="text" name="direccion" id="editar_direccion" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Puesto</label>
-                            <input type="text" name="puesto" id="editar_puesto" required class="w-full border px-3 py-2 rounded" />
+                            <input type="text" name="puesto" id="editar_puesto" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Departamento</label>
-                            <select name="departamento" id="editar_departamento" required class="w-full border px-3 py-2 rounded">
+                            <select name="departamento" id="editar_departamento" required
+                                class="w-full border px-3 py-2 rounded">
                                 <option value="">Seleccione</option>
                                 <?php foreach ($departamentos as $dep): ?>
-                                    <option value="<?php echo htmlspecialchars($dep); ?>"><?php echo htmlspecialchars($dep); ?></option>
+                                    <option value="<?php echo htmlspecialchars($dep); ?>">
+                                        <?php echo htmlspecialchars($dep); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Sueldo</label>
-                            <input type="number" step="0.01" name="sueldo" id="editar_sueldo" required class="w-full border px-3 py-2 rounded" />
+                            <input type="number" step="0.01" name="sueldo" id="editar_sueldo" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Profesión</label>
-                            <input type="text" name="profesion" id="editar_profesion" required class="w-full border px-3 py-2 rounded" />
+                            <input type="text" name="profesion" id="editar_profesion" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Correo</label>
-                            <input type="email" name="correo" id="editar_correo" required class="w-full border px-3 py-2 rounded" />
+                            <input type="email" name="correo" id="editar_correo" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Teléfono</label>
-                            <input type="text" name="telefono" id="editar_telefono" required class="w-full border px-3 py-2 rounded" />
+                            <input type="text" name="telefono" id="editar_telefono" required
+                                class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div class="md:col-span-2 flex justify-end space-x-2 mt-4">
-                            <button type="submit" name="editar_empleado" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+                            <button type="submit" name="editar_empleado"
+                                class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
                                 Guardar cambios
                             </button>
-                            <button type="button" onclick="cerrarModalEditarEmpleado()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                            <button type="button" onclick="cerrarModalEditarEmpleado()"
+                                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
                                 Cancelar
                             </button>
                         </div>
@@ -311,8 +351,7 @@ if (isset($_GET['eliminar'])) {
                             <td class="px-6 py-4"><?php echo htmlspecialchars($empleado['departamento']); ?></td>
                             <td class="px-6 py-4">
                                 <!-- Botón para editar empleado -->
-                                <button
-                                    onclick="abrirModalEditarEmpleado(
+                                <button onclick="abrirModalEditarEmpleado(
                                         <?php echo $empleado['id_empleado']; ?>,
                                         '<?php echo htmlspecialchars(addslashes($empleado['nombre_completo'])); ?>',
                                         '<?php echo $empleado['estado_familiar']; ?>',
@@ -326,12 +365,13 @@ if (isset($_GET['eliminar'])) {
                                         '<?php echo htmlspecialchars(addslashes($empleado['profesion'])); ?>',
                                         '<?php echo htmlspecialchars(addslashes($empleado['correo'])); ?>',
                                         '<?php echo htmlspecialchars(addslashes($empleado['telefono'])); ?>'
-                                    )"
-                                    class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">
+                                    )" class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">
                                     Editar
                                 </button>
                                 <!-- Botón para eliminar empleado -->
-                                <a href="empleados.php?eliminar=<?php echo $empleado['id_empleado']; ?>" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600" onclick="return confirm('¿Estás seguro de eliminar este empleado?');">
+                                <a href="empleados.php?eliminar=<?php echo $empleado['id_empleado']; ?>"
+                                    class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                                    onclick="return confirm('¿Estás seguro de eliminar este empleado?');">
                                     Eliminar
                                 </a>
                             </td>
@@ -344,8 +384,10 @@ if (isset($_GET['eliminar'])) {
             <?php if ($credencialesMostrar): ?>
                 <div class="bg-white p-4 rounded-lg shadow-lg mb-6">
                     <h2 class="text-xl font-semibold mb-4">Credenciales Generadas</h2>
-                    <p class="text-sm text-gray-700 mb-2">Usuario: <strong><?php echo htmlspecialchars($credencialesMostrar['username']); ?></strong></p>
-                    <p class="text-sm text-gray-700">Contraseña: <strong><?php echo htmlspecialchars($credencialesMostrar['password']); ?></strong></p>
+                    <p class="text-sm text-gray-700 mb-2">Usuario:
+                        <strong><?php echo htmlspecialchars($credencialesMostrar['username']); ?></strong></p>
+                    <p class="text-sm text-gray-700">Contraseña:
+                        <strong><?php echo htmlspecialchars($credencialesMostrar['password']); ?></strong></p>
                 </div>
             <?php endif; ?>
         </div>
@@ -439,4 +481,5 @@ if (isset($_GET['eliminar'])) {
         }
     </script>
 </body>
+
 </html>

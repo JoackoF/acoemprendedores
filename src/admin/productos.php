@@ -21,9 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_producto'])) 
     $tipo_producto = $_POST['tipo_producto'];
     $detalle_producto = $_POST['detalle_producto'];
     $id_cliente = $_POST['id_cliente'];
+    $fecha_adquisicion = date('Y-m-d'); // Fecha actual
 
-    $stmt = $pdo->prepare("INSERT INTO productos_financieros (tipo_producto, detalle_producto, id_cliente) VALUES (?, ?, ?)");
-    $stmt->execute([$tipo_producto, $detalle_producto, $id_cliente]);
+    $stmt = $pdo->prepare("INSERT INTO productos_financieros (tipo_producto, detalle_producto, id_cliente, fecha_adquisicion) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$tipo_producto, $detalle_producto, $id_cliente, $fecha_adquisicion]);
 
     header('Location: productos.php');
     exit();
