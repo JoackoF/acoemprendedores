@@ -8,15 +8,6 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     exit();
 }
 
-if ($res && isset($res['consrc'])) {
-    // Extraer los valores del CHECK usando regex
-    if (preg_match("/IN \((.*?)\)/", $res['consrc'], $matches)) {
-        $departamentos = array_map(function ($v) {
-            return trim($v, " '");
-        }, explode(',', $matches[1]));
-    }
-}
-
 // Obtener lista de empleados
 $empleados = $pdo->query("SELECT * FROM empleados")->fetchAll(PDO::FETCH_ASSOC);
 
