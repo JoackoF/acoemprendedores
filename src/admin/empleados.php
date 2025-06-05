@@ -89,6 +89,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editar_empleado'])) {
 if (isset($_GET['eliminar'])) {
     $id = $_GET['eliminar'];
 
+    // Eliminar usuario asociado primero
+    $stmt = $pdo->prepare("DELETE FROM usuarios WHERE id_empleado = ?");
+    $stmt->execute([$id]);
+
+    // Ahora sí elimina el empleado
     $stmt = $pdo->prepare("DELETE FROM empleados WHERE id_empleado = ?");
     $stmt->execute([$id]);
 
@@ -429,7 +434,6 @@ if (isset($_GET['eliminar'])) {
             document.getElementById('editar_edad').value = edad;
             document.getElementById('editar_direccion').value = direccion;
             document.getElementById('editar_puesto').value = puesto;
-            document.getElementById('editar_departamento').value = departamento;
             document.getElementById('editar_sueldo').value = sueldo;
             document.getElementById('editar_profesion').value = profesion;
             document.getElementById('editar_correo').value = correo;
