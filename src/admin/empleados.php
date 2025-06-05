@@ -193,20 +193,9 @@ $departamentos = [
                             <label class="block text-sm font-medium">Departamento</label>
                             <select name="departamento" required class="w-full border px-3 py-2 rounded">
                                 <option value="">Seleccione</option>
-                                <option value="Ahuachapan">Ahuachapán</option>
-                                <option value="Cabanas">Cabañas</option>
-                                <option value="Chalatenango">Chalatenango</option>
-                                <option value="Cuscatlan">Cuscatlán</option>
-                                <option value="La Libertad">La Libertad</option>
-                                <option value="La Paz">La Paz</option>
-                                <option value="La Union">La Unión</option>
-                                <option value="Morazan">Morazán</option>
-                                <option value="San Miguel">San Miguel</option>
-                                <option value="San Salvador">San Salvador</option>
-                                <option value="San Vicente">San Vicente</option>
-                                <option value="Santa Ana">Santa Ana</option>
-                                <option value="Sonsonate">Sonsonate</option>
-                                <option value="Usulutan">Usulután</option>
+                                <?php foreach ($departamentos as $dep): ?>
+                                    <option value="<?php echo htmlspecialchars($dep); ?>"><?php echo htmlspecialchars($dep); ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div>
