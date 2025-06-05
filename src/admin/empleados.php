@@ -2,31 +2,14 @@
 session_start();
 require '../database/conexion.php';
 
-$departamentos = [
-    "Ahuachapán",
-    "Cabañas",
-    "Chalatenango",
-    "Cuscatlán",
-    "La Libertad",
-    "La Paz",
-    "La Unión",
-    "Morazán",
-    "San Miguel",
-    "San Salvador",
-    "San Vicente",
-    "Santa Ana",
-    "Sonsonate",
-    "Usulután"
-];
-
 // Verificar que el usuario es un administrador
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     header('Location: ../auth/login.php');
     exit();
 }
 
-// Obtener lista de empleados
-$empleados = $pdo->query("SELECT * FROM empleados")->fetchAll(PDO::FETCH_ASSOC);
+// Obtener lista de empleados (sin departamento)
+$empleados = $pdo->query("SELECT id_empleado, codigo_empleado, nombre_completo, estado_familiar, documento_identidad, fecha_nacimiento, edad, direccion, puesto, sueldo, profesion, correo, telefono FROM empleados")->fetchAll(PDO::FETCH_ASSOC);
 
 // Inicializar variable para mostrar credenciales
 $credencialesMostrar = null;
@@ -43,15 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_empleado'])) 
     $edad = $hoy->diff($fecha_nacimiento_dt)->y;
     $direccion = $_POST['direccion'];
     $puesto = $_POST['puesto'];
-    $departamento = $_POST['departamento'];
-
-    // Validar departamento
-    if (!in_array($departamento, $departamentos)) {
-        $_SESSION['error'] = "Departamento inválido. Seleccione uno de la lista.";
-        header('Location: empleados.php');
-        exit();
-    }
-
     $sueldo = $_POST['sueldo'];
     $profesion = $_POST['profesion'];
     $correo = $_POST['correo'];
@@ -60,14 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_empleado'])) 
     // Generar un código de empleado (puedes ajustar la lógica)
     $codigo_empleado = 'EMP' . rand(1000, 9999);
 
-    // Insertar empleado
-    $stmt = $pdo->prepare("INSERT INTO empleados (codigo_empleado, nombre_completo, estado_familiar, documento_identidad, fecha_nacimiento, edad, direccion, puesto, departamento, sueldo, profesion, correo, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$codigo_empleado, $nombre, $estado, $documento, $fecha_nacimiento, $edad, $direccion, $puesto, $departamento, $sueldo, $profesion, $correo, $telefono]);
+    // Insertar empleado (sin departamento)
+    $stmt = $pdo->prepare("INSERT INTO empleados (codigo_empleado, nombre_completo, estado_familiar, documento_identidad, fecha_nacimiento, edad, direccion, puesto, sueldo, profesion, correo, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$codigo_empleado, $nombre, $estado, $documento, $fecha_nacimiento, $edad, $direccion, $puesto, $sueldo, $profesion, $correo, $telefono]);
     $idEmpleado = $pdo->lastInsertId();
 
     // Generar usuario y contraseña aleatorios
-    $username = strtolower(explode(' ', trim($nombre))[0]) . rand(min: 100, max: 999);
-    $password = bin2hex(random_bytes(length: 4)); // 8 caracteres hex
+    $username = strtolower(explode(' ', trim($nombre))[0]) . rand(100, 999);
+    $password = bin2hex(random_bytes(4)); // 8 caracteres hex
 
     // Guardar usuario (ajusta la tabla y campos según tu estructura)
     $stmt = $pdo->prepare("INSERT INTO usuarios (id_empleado, usuario, contrasena, rol) VALUES (?, ?, ?, ?)");
@@ -99,22 +73,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editar_empleado'])) {
     $edad = $_POST['edad'];
     $direccion = $_POST['direccion'];
     $puesto = $_POST['puesto'];
-    $departamento = $_POST['departamento'];
-
-    // Validar departamento
-    if (!in_array($departamento, $departamentos)) {
-        $_SESSION['error'] = "Departamento inválido. Seleccione uno de la lista.";
-        header('Location: empleados.php');
-        exit();
-    }
-
     $sueldo = $_POST['sueldo'];
     $profesion = $_POST['profesion'];
     $correo = $_POST['correo'];
     $telefono = $_POST['telefono'];
 
-    $stmt = $pdo->prepare("UPDATE empleados SET nombre_completo=?, estado_familiar=?, documento_identidad=?, fecha_nacimiento=?, edad=?, direccion=?, puesto=?, departamento=?, sueldo=?, profesion=?, correo=?, telefono=? WHERE id_empleado=?");
-    $stmt->execute([$nombre, $estado, $documento, $fecha_nacimiento, $edad, $direccion, $puesto, $departamento, $sueldo, $profesion, $correo, $telefono, $id]);
+    $stmt = $pdo->prepare("UPDATE empleados SET nombre_completo=?, estado_familiar=?, documento_identidad=?, fecha_nacimiento=?, edad=?, direccion=?, puesto=?, sueldo=?, profesion=?, correo=?, telefono=? WHERE id_empleado=?");
+    $stmt->execute([$nombre, $estado, $documento, $fecha_nacimiento, $edad, $direccion, $puesto, $sueldo, $profesion, $correo, $telefono, $id]);
 
     header('Location: empleados.php');
     exit();
@@ -130,7 +95,6 @@ if (isset($_GET['eliminar'])) {
     header('Location: empleados.php');
     exit();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -216,17 +180,6 @@ if (isset($_GET['eliminar'])) {
                             <input type="text" name="puesto" required class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium">Departamento</label>
-                            <select name="departamento" required class="w-full border px-3 py-2 rounded">
-                                <option value="">Seleccione</option>
-                                <?php foreach ($departamentos as $dep): ?>
-                                    <option value="<?php echo htmlspecialchars($dep); ?>">
-                                        <?php echo htmlspecialchars($dep); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div>
                             <label class="block text-sm font-medium">Sueldo</label>
                             <input type="number" step="0.01" name="sueldo" required
                                 class="w-full border px-3 py-2 rounded" />
@@ -308,18 +261,6 @@ if (isset($_GET['eliminar'])) {
                                 class="w-full border px-3 py-2 rounded" />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium">Departamento</label>
-                            <select name="departamento" id="editar_departamento" required
-                                class="w-full border px-3 py-2 rounded">
-                                <option value="">Seleccione</option>
-                                <?php foreach ($departamentos as $dep): ?>
-                                    <option value="<?php echo htmlspecialchars($dep); ?>">
-                                        <?php echo htmlspecialchars($dep); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div>
                             <label class="block text-sm font-medium">Sueldo</label>
                             <input type="number" step="0.01" name="sueldo" id="editar_sueldo" required
                                 class="w-full border px-3 py-2 rounded" />
@@ -359,7 +300,6 @@ if (isset($_GET['eliminar'])) {
                     <tr>
                         <th class="px-6 py-4 text-left">Nombre</th>
                         <th class="px-6 py-4 text-left">Puesto</th>
-                        <th class="px-6 py-4 text-left">Departamento</th>
                         <th class="px-6 py-4 text-left">Acciones</th>
                     </tr>
                 </thead>
@@ -368,7 +308,6 @@ if (isset($_GET['eliminar'])) {
                         <tr>
                             <td class="px-6 py-4"><?php echo htmlspecialchars($empleado['nombre_completo']); ?></td>
                             <td class="px-6 py-4"><?php echo htmlspecialchars($empleado['puesto']); ?></td>
-                            <td class="px-6 py-4"><?php echo htmlspecialchars($empleado['departamento']); ?></td>
                             <td class="px-6 py-4">
                                 <!-- Botón para editar empleado -->
                                 <button onclick="abrirModalEditarEmpleado(
@@ -380,7 +319,6 @@ if (isset($_GET['eliminar'])) {
                                         '<?php echo $empleado['edad']; ?>',
                                         '<?php echo htmlspecialchars(addslashes($empleado['direccion'])); ?>',
                                         '<?php echo htmlspecialchars(addslashes($empleado['puesto'])); ?>',
-                                        '<?php echo htmlspecialchars(addslashes($empleado['departamento'])); ?>',
                                         '<?php echo $empleado['sueldo']; ?>',
                                         '<?php echo htmlspecialchars(addslashes($empleado['profesion'])); ?>',
                                         '<?php echo htmlspecialchars(addslashes($empleado['correo'])); ?>',
@@ -481,7 +419,7 @@ if (isset($_GET['eliminar'])) {
             document.getElementById('modalEmpleado').classList.add('hidden');
         }
         function abrirModalEditarEmpleado(
-            id, nombre, estado, documento, fecha_nacimiento, edad, direccion, puesto, departamento, sueldo, profesion, correo, telefono
+            id, nombre, estado, documento, fecha_nacimiento, edad, direccion, puesto, sueldo, profesion, correo, telefono
         ) {
             document.getElementById('editar_id_empleado').value = id;
             document.getElementById('editar_nombre_completo').value = nombre;
