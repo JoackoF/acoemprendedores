@@ -178,7 +178,7 @@ if (isset($_GET['eliminar'])) {
                                     Editar
                                 </button>
                                 <!-- Botón para eliminar producto financiero -->
-                                <a href="productos_financieros.php?eliminar=<?php echo $producto['id_producto']; ?>"
+                                <a href="productos.php?eliminar=<?php echo $producto['id_producto']; ?>"
                                     class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
                                     onclick="return confirm('¿Estás seguro de eliminar este producto financiero?');">
                                     Eliminar
