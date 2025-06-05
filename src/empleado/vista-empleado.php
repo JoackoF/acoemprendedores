@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['asignar_producto'])) 
     $stmt = $pdo->prepare("INSERT INTO productos_financieros (id_cliente, tipo_producto, detalle_producto) VALUES (?, ?, ?)");
     $stmt->execute([$id_cliente, $tipo_producto, $detalle_producto]);
 
-    header('Location: dashboard_empleado.php');
+    header('Location: vista-empleado.php');
     exit();
 }
 
