@@ -94,6 +94,24 @@ if (isset($_GET['eliminar'])) {
     header('Location: empleados.php');
     exit();
 }
+
+// Lista de departamentos válidos según el constraint de la base de datos
+$departamentos = [
+    "Ahuachapán",
+    "Cabañas",
+    "Chalatenango",
+    "Cuscatlán",
+    "La Libertad",
+    "La Paz",
+    "La Unión",
+    "Morazán",
+    "San Miguel",
+    "San Salvador",
+    "San Vicente",
+    "Santa Ana",
+    "Sonsonate",
+    "Usulután"
+];
 ?>
 
 <!DOCTYPE html>
