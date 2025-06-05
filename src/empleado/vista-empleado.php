@@ -106,6 +106,9 @@ $ultimasTransacciones = $pdo->query("SELECT t.id_transaccion, t.monto, t.fecha_t
 
 // Obtener tipos de producto distintos ya existentes
 $tiposProducto = $pdo->query("SELECT DISTINCT tipo_producto FROM productos_financieros")->fetchAll(PDO::FETCH_COLUMN);
+
+// Obtener productos disponibles (sin cliente asignado)
+$productosDisponibles = $pdo->query("SELECT id_producto, tipo_producto, detalle_producto FROM productos_financieros")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
