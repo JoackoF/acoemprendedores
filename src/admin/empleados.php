@@ -20,7 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_empleado'])) 
     $estado = $_POST['estado_familiar'];
     $documento = $_POST['documento_identidad'];
     $fecha_nacimiento = $_POST['fecha_nacimiento'];
-    $edad = $_POST['edad'];
+    // Calcular edad automáticamente
+    $fecha_nacimiento_dt = new DateTime($fecha_nacimiento);
+    $hoy = new DateTime();
+    $edad = $hoy->diff($fecha_nacimiento_dt)->y;
     $direccion = $_POST['direccion'];
     $puesto = $_POST['puesto'];
     $departamento = $_POST['departamento'];
@@ -179,7 +182,7 @@ $departamentos = [
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Edad</label>
-                            <input type="number" name="edad" min="0" required class="w-full border px-3 py-2 rounded" />
+                            <input type="number" name="edad" id="edad" min="0" required class="w-full border px-3 py-2 rounded" readonly />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Dirección</label>
@@ -470,6 +473,24 @@ $departamentos = [
         function cerrarModalEditarEmpleado() {
             document.getElementById('modalEditarEmpleado').classList.add('hidden');
         }
+
+        // Calcular edad automáticamente al seleccionar la fecha de nacimiento
+        document.addEventListener('DOMContentLoaded', function () {
+            const fechaNacimientoInput = document.querySelector('input[name="fecha_nacimiento"]');
+            const edadInput = document.getElementById('edad');
+            if (fechaNacimientoInput && edadInput) {
+                fechaNacimientoInput.addEventListener('change', function () {
+                    const hoy = new Date();
+                    const nacimiento = new Date(this.value);
+                    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+                    const m = hoy.getMonth() - nacimiento.getMonth();
+                    if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
+                        edad--;
+                    }
+                    edadInput.value = isNaN(edad) ? '' : edad;
+                });
+            }
+        });
     </script>
 </body>
 
