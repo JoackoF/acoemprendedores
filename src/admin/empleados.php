@@ -2,6 +2,23 @@
 session_start();
 require '../database/conexion.php';
 
+$departamentos = [
+    "Ahuachapán",
+    "Cabañas",
+    "Chalatenango",
+    "Cuscatlán",
+    "La Libertad",
+    "La Paz",
+    "La Unión",
+    "Morazán",
+    "San Miguel",
+    "San Salvador",
+    "San Vicente",
+    "Santa Ana",
+    "Sonsonate",
+    "Usulután"
+];
+
 // Verificar que el usuario es un administrador
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     header('Location: ../auth/login.php');
@@ -114,23 +131,6 @@ if (isset($_GET['eliminar'])) {
     exit();
 }
 
-// Lista de departamentos válidos según el constraint de la base de datos
-$departamentos = [
-    "Ahuachapán",
-    "Cabañas",
-    "Chalatenango",
-    "Cuscatlán",
-    "La Libertad",
-    "La Paz",
-    "La Unión",
-    "Morazán",
-    "San Miguel",
-    "San Salvador",
-    "San Vicente",
-    "Santa Ana",
-    "Sonsonate",
-    "Usulután"
-];
 ?>
 
 <!DOCTYPE html>
@@ -221,7 +221,8 @@ $departamentos = [
                                 <option value="">Seleccione</option>
                                 <?php foreach ($departamentos as $dep): ?>
                                     <option value="<?php echo htmlspecialchars($dep); ?>">
-                                        <?php echo htmlspecialchars($dep); ?></option>
+                                        <?php echo htmlspecialchars($dep); ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
