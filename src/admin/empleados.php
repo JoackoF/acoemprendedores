@@ -27,6 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_empleado'])) 
     $direccion = $_POST['direccion'];
     $puesto = $_POST['puesto'];
     $departamento = $_POST['departamento'];
+
+    // Validar departamento
+    if (!in_array($departamento, $departamentos)) {
+        $_SESSION['error'] = "Departamento inválido. Seleccione uno de la lista.";
+        header('Location: empleados.php');
+        exit();
+    }
+
     $sueldo = $_POST['sueldo'];
     $profesion = $_POST['profesion'];
     $correo = $_POST['correo'];
@@ -75,6 +83,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editar_empleado'])) {
     $direccion = $_POST['direccion'];
     $puesto = $_POST['puesto'];
     $departamento = $_POST['departamento'];
+
+    // Validar departamento
+    if (!in_array($departamento, $departamentos)) {
+        $_SESSION['error'] = "Departamento inválido. Seleccione uno de la lista.";
+        header('Location: empleados.php');
+        exit();
+    }
+
     $sueldo = $_POST['sueldo'];
     $profesion = $_POST['profesion'];
     $correo = $_POST['correo'];
@@ -134,6 +150,12 @@ $departamentos = [
 
         <!-- Main content -->
         <div class="flex-1 p-6">
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="bg-red-100 text-red-700 p-3 rounded mb-4">
+                    <?php echo htmlspecialchars($_SESSION['error']);
+                    unset($_SESSION['error']); ?>
+                </div>
+            <?php endif; ?>
             <h1 class="text-3xl font-semibold mb-6">Empleados</h1>
 
             <div class="mb-6">
@@ -182,7 +204,8 @@ $departamentos = [
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Edad</label>
-                            <input type="number" name="edad" id="edad" min="0" required class="w-full border px-3 py-2 rounded" readonly />
+                            <input type="number" name="edad" id="edad" min="0" required
+                                class="w-full border px-3 py-2 rounded" readonly />
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Dirección</label>
@@ -197,7 +220,8 @@ $departamentos = [
                             <select name="departamento" required class="w-full border px-3 py-2 rounded">
                                 <option value="">Seleccione</option>
                                 <?php foreach ($departamentos as $dep): ?>
-                                    <option value="<?php echo htmlspecialchars($dep); ?>"><?php echo htmlspecialchars($dep); ?></option>
+                                    <option value="<?php echo htmlspecialchars($dep); ?>">
+                                        <?php echo htmlspecialchars($dep); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -289,7 +313,8 @@ $departamentos = [
                                 <option value="">Seleccione</option>
                                 <?php foreach ($departamentos as $dep): ?>
                                     <option value="<?php echo htmlspecialchars($dep); ?>">
-                                        <?php echo htmlspecialchars($dep); ?></option>
+                                        <?php echo htmlspecialchars($dep); ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -379,9 +404,11 @@ $departamentos = [
                 <div class="bg-white p-4 rounded-lg shadow-lg mb-6">
                     <h2 class="text-xl font-semibold mb-4">Credenciales Generadas</h2>
                     <p class="text-sm text-gray-700 mb-2">Usuario:
-                        <strong><?php echo htmlspecialchars($credencialesMostrar['username']); ?></strong></p>
+                        <strong><?php echo htmlspecialchars($credencialesMostrar['username']); ?></strong>
+                    </p>
                     <p class="text-sm text-gray-700">Contraseña:
-                        <strong><?php echo htmlspecialchars($credencialesMostrar['password']); ?></strong></p>
+                        <strong><?php echo htmlspecialchars($credencialesMostrar['password']); ?></strong>
+                    </p>
                 </div>
             <?php endif; ?>
         </div>
