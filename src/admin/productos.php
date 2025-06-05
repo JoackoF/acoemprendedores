@@ -20,10 +20,10 @@ $clientes = $pdo->query("SELECT id_cliente, nombre_completo FROM clientes")->fet
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_producto'])) {
     $tipo_producto = $_POST['tipo_producto'];
     $detalle_producto = $_POST['detalle_producto'];
-    $fecha_adquisicion = date('Y-m-d'); // o NULL si no aplica
+    $id_cliente = $_POST['id_cliente'];
 
-    $stmt = $pdo->prepare("INSERT INTO productos_financieros (tipo_producto, detalle_producto, fecha_adquisicion) VALUES (?, ?, ?)");
-    $stmt->execute([$tipo_producto, $detalle_producto, $fecha_adquisicion]);
+    $stmt = $pdo->prepare("INSERT INTO productos_financieros (tipo_producto, detalle_producto, id_cliente) VALUES (?, ?, ?)");
+    $stmt->execute([$tipo_producto, $detalle_producto, $id_cliente]);
 
     header('Location: productos.php');
     exit();
@@ -102,8 +102,6 @@ if (isset($_GET['eliminar'])) {
                         </select>
                     </div>
                     <!-- Campos comunes -->
-                    <!-- Elimina el select de cliente -->
-                    <!--
                     <div class="mb-4">
                         <label for="id_cliente" class="block text-sm font-medium text-gray-700">Cliente</label>
                         <select name="id_cliente" id="id_cliente"
@@ -114,7 +112,6 @@ if (isset($_GET['eliminar'])) {
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    -->
                     <!-- Campos específicos por tipo -->
                     <div id="camposCuenta" class="mb-4 hidden">
                         <label class="block text-sm font-medium text-gray-700">Monto de apertura</label>
@@ -180,7 +177,7 @@ if (isset($_GET['eliminar'])) {
                                     Editar
                                 </button>
                                 <!-- Botón para eliminar producto financiero -->
-                                <a href="productos.php?eliminar=<?php echo $producto['id_producto']; ?>"
+                                <a href="productos_financieros.php?eliminar=<?php echo $producto['id_producto']; ?>"
                                     class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
                                     onclick="return confirm('¿Estás seguro de eliminar este producto financiero?');">
                                     Eliminar
